@@ -4,6 +4,11 @@ body {
     margin: 30px auto;
 }
 
+h4 {
+    text-decoration: underline;
+    font-weight: bold;
+}
+
 /* Header */
 div#header {
     text-align: center;

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div>
+  <table id="home-table">
+    <tr>
+      <td>
+        <p id="description">
+        <b>Webbed Feet</b> is a <i>AI competition judge</i> created to evaluate
+        AI bots created for the "Artificial Intelligence" course taken by Dr.
+        Deepak Khemani.
+        <!-- More material about the judge -->
+        </p>
+      </td>
+      <td>
+        <!-- Login -->
+        {% if not user.is_authenticated %}
+        <div id="login">
+          <form method="post" action="">
+            {% csrf_token %}
+            <h3>Login</h3>
+            <table id="login_form">
+              {{form.as_table}}
+            </table>
+            <div class="centered">
+              <a href="/home/register/">Register</a> &middot; <a href="/home/forgot/"> Forgot Password?</a>
+            </div>
+            <br />
+            <div class="right">
+              <input type="submit" value="Login" />
+            </div>
+          </form>
+        </div>
+        {% else %}
+        <div id="help">
+          <!-- Quick Links -->
+          <h3>Welcome {{user}}</h3>
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="/judge/manage/">Manage Submissions</a></li>
+            <li><a href="/judge/results/">View Results</a></li>
+            <li><a href="/judge/standings/">View Standings</a></li>
+          </ul>
+          <!-- Display standings -->
+          <h4>Statistics</h4>
+          <table>
+            <thead></thead>
+            <tbody>
+              <tr><td>Bots Submitted:</td><td>0</td></tr>
+              <tr><td>Current Standing:</td><td>0</td></tr>
+              <tr><td>Current Score:</td><td>0</td></tr>
+            </tbody>
+          </table>
+        </div>
+        {% endif %}
+      </td>
+    </tr>
+  </table>
+</div>
+{% endblock %}
+
