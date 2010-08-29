@@ -3,36 +3,48 @@
 import settings
 import subprocess
 import os
+import time
 
-# Tasks
-class Task:
-    def __init__(self):
-        pass
-
-class OthelloGame(Task):
-    executable = "bin/Desdemona"
-    so1 = ""
-    so2 = ""
-
-    def __init__(self, player1, player2):
-        self.so1 = os.path.join(settings.MEDIA_ROOT, player1.data)
-        self.so2 = os.path.join(settings.MEDIA_ROOT, player2.data)
-
-    def run(self):
-        args = [executable, self.so1, self.so2]
-
-        p = subprocess.Popen(args, stdout=subprocess.PIPE)
-        output = p.communicate()[0]
-
-        return output, 'game.log'
+import gbl
 
 class TaskManager:
-    def __init__(self):
-        pass
+    period = -1 
+    parallelism=1
+    threads = []
+    scheduler = []
+    tasks = [].__iter__()
 
-class OthelloGameManager(TaskManager):
-    """Creates a new Othello Game instance to be played"""
+    def __init__(self, scheduler, period = gbl.MAINLOOP_PERIOD, parallelism=1):
+        self.period = period
+        self.parallelism = parallelism
+        self.scheduler = scheduler
+        self.tasks = (task for task in scheduler)
+        
+    def loopCondition(self):
+        return True
 
-    def get(player1, player2):
-        return OthelloGame(player1, player2)
+    def loop(self):
+        # Terminate dead threads
+        live = []
+        for thread in self.threads:
+            if thread.isAlive():
+                live.append(thread)
+            else:
+                thread.join()
+        self.threads = live
+
+        # Launch threads if possible
+        if len(self.threads) < self.parallelism:
+            try:
+                task = self.tasks.next()
+                self.threads.append(task)
+                task.start()
+            except StopIteration:
+                pass
+        return
+
+    def run(self):
+        while self.loopCondition():
+            self.loop()
+            time.sleep(self.period)
 

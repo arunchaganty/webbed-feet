@@ -22,6 +22,9 @@ def home(request):
             {'form':form,},
             context_instance = RequestContext(request))
 
+def ping(request):
+    return HttpResponse("")
+
 def register(request):
     if request.POST:
         data = request.POST
