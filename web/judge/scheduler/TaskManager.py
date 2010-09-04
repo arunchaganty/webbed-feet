@@ -1,6 +1,5 @@
 # Task Manager
 
-import settings
 import subprocess
 import os
 import time

@@ -5,21 +5,18 @@ import random
 import Task
 
 class Scheduler:
-    def __init__(self, taskManager):
-        self.TaskManager = taskManager
+    def __init__(self, src):
+        self.candidates = src
         pass
 
-
-class TestScheduler:
+class TestScheduler(Scheduler):
     def __iter__(self):
         while True:
-            yield Task.Task()
-            return 
             players = [min(self.candidates), random.choice(self.candidates)]
             # Choose a start position at random
             random.shuffle(players)
 
-            task = self.TaskManager.get(*players)
+            task = Task.Task(*players)
             yield task
 
 class MinRunScheduler(Scheduler):

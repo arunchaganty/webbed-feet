@@ -1,14 +1,24 @@
+# Definitions of a task
+
 import threading
 import gbl
 
+BASE_LOCATION="/home/aditya/teju/"
+
 # Tasks
 class Task(threading.Thread):
-    def __init__(self):
+    def __init__(self, *args):
+        self.id = args
         threading.Thread.__init__(self)
-        pass
+
+    def __repr__(self):
+        return "[Task #%s]"%(self.id,)
+    
+    def __str__(self):
+        return self.__repr__()
 
     def run(self):
-        print "Ran Task"
+        print "%s complete"%(str(self))
 
 class OthelloGame(Task):
     __executable = gbl.EXECUTABLE
@@ -16,8 +26,8 @@ class OthelloGame(Task):
     __so2 = ""
 
     def __init__(self, player1, player2):
-        self.__so1 = os.path.join(settings.MEDIA_ROOT, player1.data)
-        self.__so2 = os.path.join(settings.MEDIA_ROOT, player2.data)
+        self.__so1 = os.path.join(BASE_LOCATION, player1.data)
+        self.__so2 = os.path.join(BASE_LOCATION, player2.data)
         Task.__init__(self)
 
     def run(self):
