@@ -5,31 +5,25 @@ import random
 import Task
 
 class Scheduler:
-    def __init__(self, src):
-        self.candidates = src
+    def __init__(self, pool):
+        self.pool = pool
         pass
-
-class TestScheduler(Scheduler):
-    def __iter__(self):
-        while True:
-            players = [min(self.candidates), random.choice(self.candidates)]
-            # Choose a start position at random
-            random.shuffle(players)
-
-            task = Task.Task(*players)
-            yield task
 
 class MinRunScheduler(Scheduler):
     """Schedules games so that all bots get a nearly equal share of matches"""
 
     def __iter__(self):
         while True:
-            players = [min(self.candidates), random.choice(self.candidates)]
+            # Only two players
+            candidates = self.pool.all()
+            print "# of candidates: %d"%(len(candidates))
+            players = [self.pool.min(), random.choice(candidates)]
             # Choose a start position at random
             random.shuffle(players)
+            print players[0]
+            print players[1]
 
-            task = self.TaskManager.get(*players)
-            yield task
+            yield Task.DBTestTask(self.pool, *players)
 
 class CompetitionScheduler(Scheduler):
     """Schedules games so that all bots play all other bots exactly once"""
@@ -39,7 +33,5 @@ class CompetitionScheduler(Scheduler):
 
         for player1 in _candidates:
             for player2 in _candidates:
-                task = self.TaskManager.get(player1, player2)
-                yield task
-
+                yield Task.Task(player1, player2)
 

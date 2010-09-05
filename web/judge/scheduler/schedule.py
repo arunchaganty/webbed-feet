@@ -1,5 +1,6 @@
 # Scheduler for matches 
 
+#import settings
 import urllib
 import sys
 import time
@@ -8,6 +9,7 @@ import gbl
 
 from TaskManager import TaskManager
 import Scheduler
+import Bot
 
 _opener = urllib.URLopener(proxies={})
 
@@ -29,7 +31,8 @@ def server_alive():
 
 def main():
     # Add to a work queue. 
-    manager = TaskManager(Scheduler.TestScheduler([1,2,3,4,5,6,7,8,9]))
+    scheduler = Scheduler.MinRunScheduler(Bot.SQLiteBotDb("../../desdemona.db"))
+    manager = TaskManager(scheduler)
     manager.loopCondition = server_alive
 
     manager.run()
