@@ -7,11 +7,11 @@ reporter: Arun Tejasvi Chaganty <arunchaganty@gmail.com>
 severity: minor
 
 
-status: fixed
+status: open
 
 
-summary: Polish task scheduler interface
+summary: Add 'active' flag
 
 
-time: Sun, 29 Aug 2010 00:07:28 +0000
+time: Tue, 07 Sep 2010 19:05:33 +0000
 
