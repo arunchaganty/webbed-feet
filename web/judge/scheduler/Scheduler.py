@@ -23,15 +23,15 @@ class MinRunScheduler(Scheduler):
             print players[0]
             print players[1]
 
-            yield Task.DBTestTask(self.pool, *players)
+            yield Task.OthelloGame(*players)
 
 class CompetitionScheduler(Scheduler):
     """Schedules games so that all bots play all other bots exactly once"""
 
     def __iter__(self):
-        _candidates = self.candidates
+        _candidates = self.pool.all()
 
         for player1 in _candidates:
             for player2 in _candidates:
-                yield Task.Task(player1, player2)
+                yield Task.OthelloGame(player1, player2)
 

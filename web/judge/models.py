@@ -17,10 +17,16 @@ class Submission( models.Model ):
     def __unicode__(self):
         return "[Submission %s]"%(self.sha1sum)
 
+    class Admin:
+        pass
+
 class Run( models.Model ):
     timestamp = models.DateTimeField( auto_now = True )
     player1 = models.ForeignKey( Submission, related_name="player1_runset" )
     player2 = models.ForeignKey( Submission, related_name="player2_runset" )
     score = models.IntegerField()
     game_data = models.FileField(upload_to='runs')
+
+    class Admin:
+        pass
  

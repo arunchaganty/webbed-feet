@@ -31,8 +31,9 @@ def server_alive():
 
 def main():
     # Add to a work queue. 
-    scheduler = Scheduler.MinRunScheduler(Bot.SQLiteBotDb("../../desdemona.db"))
-    manager = TaskManager(scheduler)
+    db =  Bot.SQLiteBotDb("../../desdemona.db")
+    scheduler = Scheduler.MinRunScheduler(db)
+    manager = TaskManager(scheduler, db)
     manager.loopCondition = server_alive
 
     manager.run()

@@ -1,13 +1,16 @@
 # Definitions of a task
 
 import threading
+import subprocess
 import gbl
 
 import random
+import os
 
-BASE_LOCATION="/home/aditya/teju/"
+BASE_LOCATION="/home/teju/Projects/webbed-feet/web/media/"
 
 class Task():
+    taskManager = None
     def __init__(self, *args):
         self.id = args
 
@@ -31,6 +34,8 @@ class Task():
 
 # Tasks
 class ThreadedTask(threading.Thread):
+    taskManager = None
+
     def __init__(self, *args):
         self.id = args
         threading.Thread.__init__(self)
@@ -44,34 +49,39 @@ class ThreadedTask(threading.Thread):
     def run(self):
         print "%s complete"%(str(self))
 
-class DBTestTask(Task):
-    def __init__(self, db, player1, player2):
-        self.__db = db
-        self.__player1 = player1
-        self.__player2 = player2
-        Task.__init__(self, player1, player2)
+class DBTask(Task):
+    """ Execute a DB query on the main thread """
+    def __init__(self, query):
+        self.__query = query
+        Task.__init__(self, query)
 
     def run(self):
-        self.__db.add_run(self.__player1, self.__player2, random.randint(-100,100))
+        db = self.taskManager.db
+        db.execute(self.__query)
 
     def start(self):
         self.run()
 
+
 class OthelloGame(ThreadedTask):
     __executable = gbl.EXECUTABLE
-    __so1 = ""
-    __so2 = ""
 
     def __init__(self, player1, player2):
-        self.__so1 = os.path.join(BASE_LOCATION, player1.data)
-        self.__so2 = os.path.join(BASE_LOCATION, player2.data)
-        Task.__init__(self)
+        self.__player1 = player1
+        self.__player2 = player2
+        ThreadedTask.__init__(self)
 
     def run(self):
-        args = [__executable, self.__so1, self.__so2]
+        so1 = os.path.join(BASE_LOCATION, self.__player1.path)
+        so2 = os.path.join(BASE_LOCATION, self.__player2.path)
+        args = [self.__executable, so1, so2]
 
         p = subprocess.Popen(args, stdout=subprocess.PIPE)
         output = p.communicate()[0]
 
-        return output, 'game.log'
+        # Expect output to be one number, the score
+
+        db = self.taskManager.db
+        query = db.addRun(self.__player1, self.__player2, int(output))
+        self.taskManager.addTask(DBTask(query))
 

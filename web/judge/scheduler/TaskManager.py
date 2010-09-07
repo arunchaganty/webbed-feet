@@ -11,13 +11,19 @@ class TaskManager:
     parallelism=1
     threads = []
     scheduler = []
-    tasks = [].__iter__()
+    source = [].__iter__()
+    tasks = []
 
-    def __init__(self, scheduler, period = gbl.MAINLOOP_PERIOD, parallelism=1):
+
+    def __init__(self, scheduler, db, period = gbl.MAINLOOP_PERIOD, parallelism=1):
         self.period = period
         self.parallelism = parallelism
         self.scheduler = scheduler
-        self.tasks = (task for task in scheduler)
+        self.db = db
+        self.source = scheduler.__iter__()
+
+    def addTask(self, task):
+        self.tasks.append(task)
         
     def loopCondition(self):
         return True
@@ -35,8 +41,12 @@ class TaskManager:
         # Launch threads if possible
         if len(self.threads) < self.parallelism:
             try:
-                task = self.tasks.next()
+                if len(self.tasks) > 0:
+                    task = self.tasks.pop(0)
+                else:
+                    task = self.source.next()
                 self.threads.append(task)
+                task.taskManager = self
                 task.start()
             except StopIteration:
                 pass
