@@ -15,8 +15,9 @@ class SubmissionForm( forms.ModelForm ):
     def clean(self):
         forms.ModelForm.clean(self)
         self.clean_sha1sum()
-        self.clean_binary1sum()
+        self.clean_binary()
         self.cleaned_data["data"].name = self.cleaned_data["sha1sum"]
+        print self.cleaned_data["data"].size
         self.instance.sha1sum = self.cleaned_data["sha1sum"]
         return self.cleaned_data
 
@@ -27,6 +28,7 @@ class SubmissionForm( forms.ModelForm ):
         self.cleaned_data["sha1sum"] = hashlib.sha1(data.read()).hexdigest()
 
     def clean_binary(self):
-        settings.
-
+        if settings.POST_SUBMISSION_HOOK != None:
+            data = self.cleaned_data["data"]
+            settings.POST_SUBMISSION_HOOK(data)
 

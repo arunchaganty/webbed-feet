@@ -17,7 +17,12 @@ class MinRunScheduler(Scheduler):
             # Only two players
             candidates = self.pool.all()
             print "# of candidates: %d"%(len(candidates))
-            players = [self.pool.min(), random.choice(candidates)]
+
+            minPlayer = self.pool.min()
+            if minPlayer != None:
+                players = [minPlayer, random.choice(candidates)]
+            else:
+                players = [random.choice(candidates), random.choice(candidates)]
             # Choose a start position at random
             random.shuffle(players)
             print players[0]

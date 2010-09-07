@@ -7,7 +7,6 @@ import gbl
 import random
 import os
 
-BASE_LOCATION="/home/teju/Projects/webbed-feet/web/media/"
 
 class Task():
     taskManager = None
@@ -72,16 +71,18 @@ class OthelloGame(ThreadedTask):
         ThreadedTask.__init__(self)
 
     def run(self):
-        so1 = os.path.join(BASE_LOCATION, self.__player1.path)
-        so2 = os.path.join(BASE_LOCATION, self.__player2.path)
+        so1 = os.path.join(gbl.BASE_LOCATION, self.__player1.path)
+        so2 = os.path.join(gbl.BASE_LOCATION, self.__player2.path)
         args = [self.__executable, so1, so2]
 
-        p = subprocess.Popen(args, stdout=subprocess.PIPE)
+        p = subprocess.Popen(args, stdout=subprocess.PIPE, cwd=gbl.CWD)
         output = p.communicate()[0]
+        # Post-process scores
+        score = gbl.POST_RUN_SCORE(int(output))
 
         # Expect output to be one number, the score
 
         db = self.taskManager.db
-        query = db.addRun(self.__player1, self.__player2, int(output))
+        query = db.addRun(self.__player1, self.__player2, score)
         self.taskManager.addTask(DBTask(query))
 

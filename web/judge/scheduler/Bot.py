@@ -115,9 +115,9 @@ class SQLiteBotDb(BotDb):
         print query
         cursor = self.execute(query)
         b = cursor.fetchone()
-        b = b[:-1]
 
-        if b: 
+        if b and b[:-1]:
+            b = b[:-1]
             return Bot(self,*b)
         else: 
             return None
