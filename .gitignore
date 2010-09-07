@@ -5,3 +5,4 @@
 *.so
 *~
 settings.py
+web/media/bots/
