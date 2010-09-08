@@ -6,3 +6,5 @@
 *~
 settings.py
 web/media/bots/
+web/media/logs/
+web/desdemona.db
