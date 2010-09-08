@@ -2,6 +2,17 @@
 Defines the various errors that can be handled.
 """
 
+STATUS = (
+    ('OK', 'No Errors'),
+    ('DQ1', 'Player 1 Disqualified'),
+    ('DQ2', 'Player 2 Disqualified'),
+    ('TO1', 'Player 1 Timed Out'),
+    ('TO2', 'Player 2 Timed Out'),
+    ('CR1', 'Player 1 Crashed'),
+    ('CR2', 'Player 2 Crashed'),
+    ('ERR', 'Unknown Error'),
+    )
+
 class GameError(StandardError):
     def __init__(self, player, msg=""):
         self.player = player

@@ -8,6 +8,10 @@ import random
 import shutil
 import hashlib
 import os
+from datetime import datetime
+import Bot
+
+import errors
 
 # Error
 def handleError(self, code, player1, player2):
@@ -82,7 +86,9 @@ class DBTask(Task):
     def start(self):
         self.run()
 
-class OthelloGame(ThreadedTask):
+class GameRunTask(ThreadedTask):
+    """Run the game"""
+
     __executable = gbl.EXECUTABLE
 
     def __init__(self, player1, player2):
@@ -91,31 +97,45 @@ class OthelloGame(ThreadedTask):
         ThreadedTask.__init__(self)
 
     def run(self):
+        # Get arguments for the game
         so1 = os.path.join(gbl.BASE_LOCATION, self.__player1.path)
         so2 = os.path.join(gbl.BASE_LOCATION, self.__player2.path)
         args = [self.__executable, so1, so2]
 
-        p = subprocess.Popen(args, stdout=subprocess.PIPE, cwd=gbl.CWD)
+        # Run the game
+        p = subprocess.Popen(args, stdout=subprocess.PIPE, cwd=gbl.GAME_CWD)
         output = p.communicate()[0]
-        # Post-process scores
-        # Expect output to be one number, the score
+        ret = p.wait()
+
+        # The hook takes care of output codes
+        output = output.strip()
+        score = gbl.POST_RUN_HOOK(output)
+        if output.isdigit():
+            status = "OK"
+        # Else expect an error code
+        elif output in ["DQ1", "DQ2", "TO1", "TO2", "CR1", "CR2", "ERR"]:
+            status = output
+        else:
+            status = "ERR"
+
+        log_path = ""
         try:
-            int(output)
-        except ValueError:
-            try:
-                gbl.handleError(output, player1, player2)
-            except GameError as e:
-                score = gbl.POST_RUN_SCORE(int(output))
+            # Also, save the game log file.
+            if gbl.POST_RUN_LOG:
+                log_in = os.path.join(gbl.GAME_CWD, gbl.POST_RUN_LOG)
 
-        # Also, save the game log file.
-        log_path = None
-        if gbl.POST_RUN_LOG:
-            log_file = open(gbl.POST_RUN_LOG, "r")
-            sha1sum = hashlib.sha1(data.read()).hexdigest()
-            log_path = os.path.join(gbl.POST_RUN_LOG_PATH,sha1sum))
-            shutil.copy(gbl.POST_RUN_LOG, log_path)
+                sha1sum = hashlib.sha1(open(log_in).read()).hexdigest()
 
+                log_path = os.path.join("logs",sha1sum)
+                log_out = os.path.join(gbl.BASE_LOCATION, log_path)
+                # Copy the log file to the log location
+                shutil.copy(log_in, log_out)
+        except StandardError as e:
+            print e
+            log_path = ""
+
+        run = Bot.Run(datetime.now(), self.__player1, self.__player2, score, status, log_path)
         db = self.taskManager.db
-        query = db.addRun(self.__player1, self.__player2, score, log_path)
+        query = db.addRun(run)
         self.taskManager.addTask(DBTask(query))
 

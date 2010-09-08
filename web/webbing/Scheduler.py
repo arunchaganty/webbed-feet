@@ -25,10 +25,9 @@ class MinRunScheduler(Scheduler):
                 players = [random.choice(candidates), random.choice(candidates)]
             # Choose a start position at random
             random.shuffle(players)
-            print players[0]
-            print players[1]
+            print players
 
-            yield Task.OthelloGame(*players)
+            yield Task.GameRunTask(*players)
 
 class CompetitionScheduler(Scheduler):
     """Schedules games so that all bots play all other bots exactly once"""
@@ -38,5 +37,5 @@ class CompetitionScheduler(Scheduler):
 
         for player1 in _candidates:
             for player2 in _candidates:
-                yield Task.OthelloGame(player1, player2)
+                yield Task.GameRunTask(player1, player2)
 

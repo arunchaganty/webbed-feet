@@ -24,14 +24,14 @@ def server_alive():
        else:
            print "Server still alive..."
    except StandardError as e:
-       print "Server error: ", e.msg
+       print "Server error: ", str(e)
        return False
 
    return True
 
 def main():
     # Add to a work queue. 
-    db =  Bot.SQLiteBotDb("../../desdemona.db")
+    db =  Bot.SQLiteBotDb("../desdemona.db")
     scheduler = Scheduler.MinRunScheduler(db)
     manager = TaskManager(scheduler, db)
     manager.loopCondition = server_alive
@@ -39,5 +39,10 @@ def main():
     manager.run()
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) != 2 or sys.argv[1] != "start":
+        print "Webbing is the scheduler daemon for webbed-feet"
+        print "Usage: %s start"%(sys.argv[0])
+        sys.exit(1)
+    else:
+        main()
 

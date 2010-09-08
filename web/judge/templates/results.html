@@ -6,16 +6,17 @@
 {% if runs %}
     <table id="results" class="results">
       <thead>
-        <th>Timestamp</th> <th>Team 1</th> <th>Team 2</th> <th>Results</th> <th>Details</th> 
+        <th>Timestamp</th> <th>Team 1</th> <th>Team 2</th> <th>Status</th> <th>Score</th><th>Log File</th> 
       </thead>
     <tbody>
     {% for run in runs %}
     <tr>
       <td><b>{{run.timestamp}}</b></td>
-      <td>{{run.player1}}</td>
-      <td>{{run.player2}}</td>
-      <td>{{run.result}}</td>
-      <td><a href="/judge/run/{{run.id}}/">Click Here</a></td>
+      <td>{{run.player1.team}} ({{run.player1.comments}})</td>
+      <td>{{run.player2.team}} ({{run.player2.comments}})</td>
+      <td>{{run.status}}</td>
+      <td>{{run.score}}</td>
+      <td><a href="{{MEDIA_URL}}{{run.game_data}}">Click Here</a></td>
     {% endfor %}
     </tbody>
     </table>

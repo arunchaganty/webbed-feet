@@ -1,10 +1,9 @@
 # Wrapper to access a Task from the database.
 
 import sqlite3
-from datetime import datetime
 
 class Bot:
-    """Wrapper about a bot instance"""
+    """Wrapper about a bot's db instance"""
     def __init__(self, db, bot_id, team_id, timestamp, checksum, path, comments):
         self.bot_id = bot_id
         self.team_id = team_id
@@ -25,7 +24,25 @@ class Bot:
         """Get number of plays"""
         return self.__db.get_count(self)
 
+class Run:
+    def __init__(self, timestamp, player1, player2, score, status, game_data):
+        self.run_id = None
+        self.timestamp = timestamp
+        self.player1 = player1
+        self.player2 = player2
+        self.score = score
+        self.status = status
+        self.game_data = game_data
+
+    def __repr__(self):
+        return "[Run %s]"%(self.timestamp)
+
+    def __str__(self):
+        return self.__repr__()
+
 class BotDb:
+    """Abstract interface for a bot db"""
+
     def __init__(self):
         pass
 
@@ -50,7 +67,7 @@ class BotDb:
     def get_count(self, bot = None):
         pass
 
-    def add_run(self, bot1, bot2, score, timestamp):
+    def add_run(self, run):
         pass
 
 class SQLiteBotDb(BotDb):
@@ -134,8 +151,9 @@ class SQLiteBotDb(BotDb):
             r = cursor.fetchone()
             return r[0]
 
-    def addRun(self, bot1, bot2, score, timestamp = None):
-        value_str = "(NULL, '%s', %d, %d, %d, '')"%(str(datetime.now()), bot1.bot_id, bot2.bot_id, score)
+    def addRun(self, run):
+        value_str = "(NULL, '%s', %d, %d, %d, '%s', '%s')"%(run.timestamp, run.player1.bot_id, 
+                run.player2.bot_id, run.score, run.status, run.game_data)
         query = "INSERT INTO %s VALUES %s"%(self.__runTable, value_str)
         return query
     
