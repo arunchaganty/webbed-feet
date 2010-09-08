@@ -1,7 +1,8 @@
 from django import forms
 from django.db import models as d_models
 
-from scheduler import gbl
+import game
+from web.webbing import errors
 
 import settings
 import models
@@ -12,29 +13,33 @@ class SubmissionForm( forms.ModelForm ):
     data = forms.FileField(label="Bot Binary")
     class Meta:
         model = models.Submission
-        exclude = ('timestamp','team', 'sha1sum')
+        exclude = ('timestamp', 'team', 'sha1sum')
 
     def clean(self):
         forms.ModelForm.clean(self)
-        self.clean_sha1sum()
-        self.process_binary()
-        self.cleaned_data["data"].name = self.cleaned_data["sha1sum"]
-        print self.cleaned_data["data"].size
-        self.instance.sha1sum = self.cleaned_data["sha1sum"]
-        return self.cleaned_data
 
-    # TODO: Check binary for validity, etc.
+        if self.is_valid():
+            # Add the SHA1SUM
+            self.clean_sha1sum()
+
+            # Rename the file by it's SHA1SUM
+            self.cleaned_data["data"].name = self.cleaned_data["sha1sum"]
+            self.instance.sha1sum = self.cleaned_data["sha1sum"]
+
+        return self.cleaned_data
 
     def clean_sha1sum(self):
         data = self.cleaned_data["data"]
         self.cleaned_data["sha1sum"] = hashlib.sha1(data.read()).hexdigest()
 
-    def process_binary(self):
-        if gbl.POST_SUBMISSION_HOOK != None:
-            data = self.cleaned_data["data"]
-            data = gbl.POST_SUBMISSION_HOOK(data)
-            self.cleaned_data["data"].truncate(0)
-            self.cleaned_data["data"].write(data)
-            self.cleaned_data["data"].close()
+    def clean_data(self):
+        data = self.cleaned_data["data"]
+        if game.BOT_SUBMISSION_HOOK != None:
+            # Pass the data through the hook
+            try:
+                data = game.BOT_SUBMISSION_HOOK(data)
+            except errors.GameError as e:
+                raise forms.ValidationError(str(e))
+        return data
 
 

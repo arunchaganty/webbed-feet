@@ -6,7 +6,27 @@ import gbl
 
 import random
 import shutil
+import hashlib
 import os
+
+# Error
+def handleError(self, code, player1, player2):
+    if code == "DQ1":
+        raise DisqualificationError(player1)
+    elif code == "DQ2":
+        raise DisqualificationError(player2)
+    elif code == "TO1":
+        raise TimeoutError(player1)
+    elif code == "TO2":
+        raise TimeoutError(player2)
+    elif code == "CR1":
+        raise CrashError(player1)
+    elif code == "CR2":
+        raise CrashError(player2)
+    elif code == "ERR":
+        raise UnknownError()
+    else:
+        raise StandardError(code)
 
 
 class Task():
@@ -87,7 +107,15 @@ class OthelloGame(ThreadedTask):
             except GameError as e:
                 score = gbl.POST_RUN_SCORE(int(output))
 
+        # Also, save the game log file.
+        log_path = None
+        if gbl.POST_RUN_LOG:
+            log_file = open(gbl.POST_RUN_LOG, "r")
+            sha1sum = hashlib.sha1(data.read()).hexdigest()
+            log_path = os.path.join(gbl.POST_RUN_LOG_PATH,sha1sum))
+            shutil.copy(gbl.POST_RUN_LOG, log_path)
+
         db = self.taskManager.db
-        query = db.addRun(self.__player1, self.__player2, score)
+        query = db.addRun(self.__player1, self.__player2, score, log_path)
         self.taskManager.addTask(DBTask(query))
 

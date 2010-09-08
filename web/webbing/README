@@ -1,0 +1,10 @@
+Webbing
+=======
+
+Webbing is a daemon that schedules and runs games for webbed-feet.
+
+Configuration
+=============
+
+gbl.py contains all the configuration primitives.
+
