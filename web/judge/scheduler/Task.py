@@ -5,6 +5,7 @@ import subprocess
 import gbl
 
 import random
+import shutil
 import os
 
 
@@ -61,7 +62,6 @@ class DBTask(Task):
     def start(self):
         self.run()
 
-
 class OthelloGame(ThreadedTask):
     __executable = gbl.EXECUTABLE
 
@@ -78,9 +78,14 @@ class OthelloGame(ThreadedTask):
         p = subprocess.Popen(args, stdout=subprocess.PIPE, cwd=gbl.CWD)
         output = p.communicate()[0]
         # Post-process scores
-        score = gbl.POST_RUN_SCORE(int(output))
-
         # Expect output to be one number, the score
+        try:
+            int(output)
+        except ValueError:
+            try:
+                gbl.handleError(output, player1, player2)
+            except GameError as e:
+                score = gbl.POST_RUN_SCORE(int(output))
 
         db = self.taskManager.db
         query = db.addRun(self.__player1, self.__player2, score)
