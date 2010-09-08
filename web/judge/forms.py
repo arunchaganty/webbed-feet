@@ -1,6 +1,8 @@
 from django import forms
 from django.db import models as d_models
 
+from scheduler import gbl
+
 import settings
 import models
 
@@ -15,7 +17,7 @@ class SubmissionForm( forms.ModelForm ):
     def clean(self):
         forms.ModelForm.clean(self)
         self.clean_sha1sum()
-        self.clean_binary()
+        self.process_binary()
         self.cleaned_data["data"].name = self.cleaned_data["sha1sum"]
         print self.cleaned_data["data"].size
         self.instance.sha1sum = self.cleaned_data["sha1sum"]
@@ -27,8 +29,12 @@ class SubmissionForm( forms.ModelForm ):
         data = self.cleaned_data["data"]
         self.cleaned_data["sha1sum"] = hashlib.sha1(data.read()).hexdigest()
 
-    def clean_binary(self):
-        if settings.POST_SUBMISSION_HOOK != None:
+    def process_binary(self):
+        if gbl.POST_SUBMISSION_HOOK != None:
             data = self.cleaned_data["data"]
-            settings.POST_SUBMISSION_HOOK(data)
+            data = gbl.POST_SUBMISSION_HOOK(data)
+            self.cleaned_data["data"].truncate(0)
+            self.cleaned_data["data"].write(data)
+            self.cleaned_data["data"].close()
+
 

@@ -1,0 +1,17 @@
+creator: Arun Tejasvi Chaganty <arunchaganty@gmail.com>
+
+
+reporter: Arun Tejasvi Chaganty <arunchaganty@gmail.com>
+
+
+severity: minor
+
+
+status: fixed
+
+
+summary: Process .cpp and .h files to generate .so
+
+
+time: Wed, 08 Sep 2010 12:26:10 +0000
+
