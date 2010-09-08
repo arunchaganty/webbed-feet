@@ -1,5 +1,7 @@
 from django.db import models
 
+import operator
+
 from web.home import models as home_models
 
 class Submission( models.Model ):
@@ -16,11 +18,21 @@ class Submission( models.Model ):
 
         score = 0
         # When player 1, +ve score is good; when player 2, -ve score is good
-        score += [ run.score for run in player1Runs if run.score > 0 ]
-        score += [ run.score for run in player2Runs if run.score < 0 ]
+        if player1Runs:
+            score += reduce(operator.add, [ run.score for run in player1Runs if run.score > 0 ])
+        if player2Runs:
+            score += reduce(operator.add, [ run.score for run in player2Runs if run.score < 0 ])
 
         return score
     score = property(get_score)
+
+    def get_runCount(self):
+        # Compute score
+        player1Runs = Run.objects.filter(player1=self).count()
+        player2Runs = Run.objects.filter(player2=self).count()
+
+        return player1Runs + player2Runs
+    runCount = property(get_runCount)
 
     def __unicode__(self):
         return "[Submission %s]"%(self.sha1sum)
