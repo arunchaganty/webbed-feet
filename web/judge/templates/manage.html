@@ -20,6 +20,7 @@
     </div>
     <div id="view-submission">
     <h2>Existing Submissions</h2>
+    <p>Click bot for match details</p>
     {% if submissions %}
         <table id="submissions" class="results">
           <thead>
@@ -33,7 +34,7 @@
         {% for submission in submissions %}
         <tr>
           <td><b>{{submission.timestamp}}</b></td>
-          <td>{{submission.name}}</td>
+          <td><a href="/judge/results/{{submission.id}}/">{{submission.name}}</a></td>
           <td>{{submission.runCount}}</td>
           <td>{{submission.score}}</td>
           <td>{{submission.comments}}</td>

@@ -2,7 +2,7 @@
 
 {% block body %}
 <div id="standings">
-<h2>Match Results</h2>
+  <h2>Match Results {%if bot_id%} For Bot#{{bot_id}} {%endif%}</h2>
 {% if runs %}
     <table id="results" class="results">
       <thead>

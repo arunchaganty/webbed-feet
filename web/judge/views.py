@@ -9,6 +9,8 @@ from web.home import models as home_models
 import forms
 import models
 
+from django.core import exceptions
+
 from web import settings
 
 def manage(request):
@@ -49,10 +51,23 @@ def standings(request):
             {'scores':scores},
             context_instance = RequestContext(request))
 
-def results(request):
-    runs = models.Run.objects.order_by('-timestamp')
-    return render_to_response("results.html", 
-            {'runs':runs},
-            context_instance = RequestContext(request))
-
+def results(request, bot_id=None):
+    # Paginate results
+    if bot_id == None:
+        runs = models.Run.objects.order_by('-timestamp')
+        return render_to_response("results.html", 
+                {'runs':runs},
+                context_instance = RequestContext(request))
+    else:
+        try:
+            bot = models.Submission.objects.get(id=bot_id)
+            runs = bot.player1_runset.all() | bot.player2_runset.all()
+            runs = runs.order_by('-timestamp')
+            return render_to_response("results.html", 
+                    {'bot_id':bot_id,
+                    'runs':runs},
+                    context_instance = RequestContext(request))
+        except exceptions.ObjectDoesNotExist:
+            return render_to_response("results.html", 
+                    context_instance = RequestContext(request))
 
