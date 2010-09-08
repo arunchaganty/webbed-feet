@@ -50,7 +50,7 @@ def standings(request):
             context_instance = RequestContext(request))
 
 def results(request):
-    runs = models.Run.objects.order_by('timestamp')
+    runs = models.Run.objects.order_by('-timestamp')
     return render_to_response("results.html", 
             {'runs':runs},
             context_instance = RequestContext(request))

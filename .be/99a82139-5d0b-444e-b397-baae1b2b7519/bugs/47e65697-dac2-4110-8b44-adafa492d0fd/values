@@ -7,11 +7,11 @@ reporter: Arun Tejasvi Chaganty <arunchaganty@gmail.com>
 severity: minor
 
 
-status: fixed
+status: open
 
 
-summary: Store game logs
+summary: Standings results on per user basis
 
 
-time: Wed, 08 Sep 2010 12:59:44 +0000
+time: Wed, 08 Sep 2010 21:08:36 +0000
 

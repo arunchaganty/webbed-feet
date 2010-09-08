@@ -12,8 +12,8 @@
     {% for run in runs %}
     <tr>
       <td><b>{{run.timestamp}}</b></td>
-      <td>{{run.player1.team}} ({{run.player1.comments}})</td>
-      <td>{{run.player2.team}} ({{run.player2.comments}})</td>
+      <td>{{run.player1.team}} ({{run.player1.name}})</td>
+      <td>{{run.player2.team}} ({{run.player2.name}})</td>
       <td>{{run.status}}</td>
       <td>{{run.score}}</td>
       <td><a href="{{MEDIA_URL}}{{run.game_data}}">Click Here</a></td>

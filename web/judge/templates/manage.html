@@ -23,15 +23,20 @@
     {% if submissions %}
         <table id="submissions" class="results">
           <thead>
-            <th>Timestamp</th> <th>Comments</th><th>Run Count</th><th>Score</th>
+            <th>Timestamp</th> 
+            <th>Name</th>
+            <th>Run Count</th>
+            <th>Average Score</th>
+            <th>Comments</th>
           </thead>
         <tbody>
         {% for submission in submissions %}
         <tr>
           <td><b>{{submission.timestamp}}</b></td>
-          <td>{{submission.comments}}</td>
+          <td>{{submission.name}}</td>
           <td>{{submission.runCount}}</td>
           <td>{{submission.score}}</td>
+          <td>{{submission.comments}}</td>
         {% endfor %}
         </tbody>
         </table>

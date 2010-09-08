@@ -4,11 +4,12 @@ import sqlite3
 
 class Bot:
     """Wrapper about a bot's db instance"""
-    def __init__(self, db, bot_id, team_id, timestamp, checksum, path, comments):
+    def __init__(self, db, bot_id, team_id, timestamp, checksum, name, path, comments):
         self.bot_id = bot_id
         self.team_id = team_id
         self.timestamp = timestamp
         self.checksum = checksum
+        self.name = name
         self.path = path
         self.comments = comments
 
