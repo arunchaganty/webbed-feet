@@ -3,13 +3,48 @@
 {% block body %}
 <div id="standings">
   <h2>Match Results {%if bot_id%} For Bot#{{bot_id}} {%endif%}</h2>
+  {% if messages %}
+  <div id="messages">
+  <ul class="messages">
+      {% for message in messages %}
+      <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+      {% endfor %}
+  </ul>
+  </div>
+  {% endif %}
+
+
 {% if runs %}
+    <div class="pagination">
+        <span class="step-links">
+            {% if runs.has_previous %}
+                {% if bot_id %}
+                <a href="/judge/results/bot/{{bot_id}}/{{ runs.previous_page_number }}/">previous</a>
+                {% else %}
+                <a href="/judge/results/all/{{ runs.previous_page_number }}/">previous</a>
+                {% endif %}
+            {% endif %}
+
+            <span class="current">
+                Page {{ runs.number }} of {{ runs.paginator.num_pages }}.
+            </span>
+
+            {% if runs.has_next %}
+                {% if bot_id %}
+                <a href="/judge/results/bot/{{bot_id}}/{{ runs.next_page_number }}/">next</a>
+                {% else %}
+                <a href="/judge/results/all/{{ runs.next_page_number }}/">next</a>
+                {% endif %}
+            {% endif %}
+        </span>
+    </div>
+
     <table id="results" class="results">
       <thead>
         <th>Timestamp</th> <th>Team 1</th> <th>Team 2</th> <th>Status</th> <th>Score</th><th>Log File</th> 
       </thead>
     <tbody>
-    {% for run in runs %}
+    {% for run in runs.object_list %}
     <tr>
       <td><b>{{run.timestamp}}</b></td>
       <td>{{run.player1.team}} ({{run.player1.name}})</td>

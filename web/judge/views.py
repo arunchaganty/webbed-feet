@@ -3,17 +3,22 @@
 from django.shortcuts import render_to_response 
 from django.template.context import RequestContext
 from django.http import HttpResponse, HttpResponseRedirect
-import django.contrib.auth as auth 
-import django.contrib.auth.views as auth_views 
-from web.home import models as home_models
+
+from django.contrib import messages
+from django.core.paginator import Paginator, InvalidPage, EmptyPage
+
 import forms
 import models
+import web.registration.models as r_models
 
 from django.core import exceptions
 
 from web import settings
 
 from web.home.decorators import login_required
+
+RUNS_PER_PAGE = 25
+
 
 @login_required()
 def manage(request):
@@ -40,37 +45,43 @@ def standings(request):
     # TODO: Make query more efficient
     scores = {}
     bots = models.Submission.objects.all()
-    for team in home_models.Team.objects.all():
+    for team in r_models.Team.objects.all():
         # Get bots' scores
         s = map( lambda t: t.score, bots.filter(team = team))
         if s:
             scores[team] = max(s)
     
     scores = scores.items()
-    scores.sort(key=lambda ts: ts[1])
+    scores.sort(key=lambda ts: ts[1], reverse=True)
     scores = [ (p,) + s for (p,s) in zip(range(1,len(scores)+1), scores) ]
         
     return render_to_response("standings.html", 
             {'scores':scores},
             context_instance = RequestContext(request))
 
-def results(request, bot_id=None):
-    # Paginate results
-    if bot_id == None:
-        runs = models.Run.objects.order_by('-timestamp')
-        return render_to_response("results.html", 
-                {'runs':runs},
-                context_instance = RequestContext(request))
-    else:
+def results(request, bot_id=None, page=1):
+    if bot_id != None:
         try:
             bot = models.Submission.objects.get(id=bot_id)
             runs = bot.player1_runset.all() | bot.player2_runset.all()
             runs = runs.order_by('-timestamp')
-            return render_to_response("results.html", 
-                    {'bot_id':bot_id,
-                    'runs':runs},
-                    context_instance = RequestContext(request))
         except exceptions.ObjectDoesNotExist:
-            return render_to_response("results.html", 
-                    context_instance = RequestContext(request))
+            message.error(request, "No bot by that id exists")
+            runs = models.Run.objects.order_by('-timestamp')
+    else:
+        runs = models.Run.objects.order_by('-timestamp')
+
+    # Paginate results
+    paginator = Paginator( runs, RUNS_PER_PAGE )
+    try:
+        displayed_runs = paginator.page(page)
+    except:
+        displayed_runs = paginator.page(paginator.num_pages)
+
+    return render_to_response("results.html", {
+            'bot_id':bot_id,
+            'runs':displayed_runs,
+            'paginator':paginator,
+            },
+            context_instance = RequestContext(request))
 
