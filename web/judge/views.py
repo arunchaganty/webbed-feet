@@ -13,18 +13,21 @@ from django.core import exceptions
 
 from web import settings
 
+from web.home.decorators import login_required
+
+@login_required()
 def manage(request):
     if request.POST:
         data = request.POST
         file_data = request.FILES
-        sub = models.Submission(team = request.user)
+        sub = models.Submission(team = request.session["team"])
         form = forms.SubmissionForm(data=data, files=file_data, instance=sub)
         if form.is_valid():
             form.save()
     else:
         form = forms.SubmissionForm()
 
-    submissions = models.Submission.objects.filter(team = request.user)
+    submissions = models.Submission.objects.filter(team = request.session["team"])
 
     return render_to_response("manage.html", 
             {'form':form,
