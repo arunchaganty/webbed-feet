@@ -10,8 +10,13 @@ RequestContext.
 from web import settings
 
 def default(request):
-    return {'user':request.user,
-            'SITE_URL':settings.SITE_URL,
-            'MEDIA_URL':settings.MEDIA_URL,
+    values = {
+                'SITE_URL':settings.SITE_URL,
+                'MEDIA_URL':settings.MEDIA_URL,
+                'UP_URL':settings.UP_URL,
             }
+    if request.session.has_key("team"):
+        values["team"] = request.session["team"]
+
+    return values
 

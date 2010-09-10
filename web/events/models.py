@@ -10,8 +10,8 @@ class TeamEvent( models.Model ):
     logo=models.FileField(upload_to="logos/", blank=True, null=True)
     size = models.SmallIntegerField()
     min_size = models.SmallIntegerField()
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
+    start_time = models.DateTimeField(blank=True, null=True)
+    end_time = models.DateTimeField(blank=True, null=True)
 
     teams = models.ManyToManyField(r_models.Team, blank=True, null=True, related_name='events')
     

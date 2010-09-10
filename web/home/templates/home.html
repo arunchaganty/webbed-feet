@@ -9,12 +9,14 @@
         <b>Webbed Feet</b> is a <i>AI competition judge</i> created to evaluate
         AI bots created for the "Artificial Intelligence" course taken by Dr.
         Deepak Khemani.
+
+        {{team}}
         <!-- More material about the judge -->
         </p>
       </td>
       <td>
         <!-- Login -->
-        {% if not user.is_authenticated %}
+        {% if not team %}
         <div id="login">
           <form method="post" action="">
             {% csrf_token %}
@@ -23,7 +25,7 @@
               {{form.as_table}}
             </table>
             <div class="centered">
-              <a href="/home/register/">Register</a> &middot; <a href="/home/forgot/"> Forgot Password?</a>
+              <a href="{{UP_URL}}/">Register On the Userportal</a> 
             </div>
             <br />
             <div class="right">
@@ -34,7 +36,7 @@
         {% else %}
         <div id="help">
           <!-- Quick Links -->
-          <h3>Welcome {{user}}</h3>
+          <h3>Welcome {{team}}</h3>
           <h4>Quick Links</h4>
           <ul>
             <li><a href="/judge/manage/">Manage Submissions</a></li>

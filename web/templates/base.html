@@ -16,12 +16,12 @@
 
         <div id="linkbar">
             <a href="/home/">Home</a>
-            {% if user.is_authenticated %}
+            {% if team %}
             &middot; <a href="/judge/manage/">Manage Submissions</a>
             {% endif %}
             &middot; <a href="/judge/standings/">Standings</a>
             &middot; <a href="/judge/results/">Match Results</a>
-            {% if user.is_authenticated %}
+            {% if team %}
             &middot; <a href="/home/logout/">Logout</a> 
             {% endif %}
         </div>
