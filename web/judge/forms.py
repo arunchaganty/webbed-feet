@@ -13,7 +13,7 @@ class SubmissionForm( forms.ModelForm ):
     data = forms.FileField(label="Bot Binary")
     class Meta:
         model = models.Submission
-        exclude = ('timestamp', 'team', 'sha1sum')
+        exclude = ('timestamp', 'team', 'sha1sum', 'active')
 
     def clean(self):
         forms.ModelForm.clean(self)
@@ -25,6 +25,7 @@ class SubmissionForm( forms.ModelForm ):
             # Rename the file by it's SHA1SUM
             self.cleaned_data["data"].name = self.cleaned_data["sha1sum"]
             self.instance.sha1sum = self.cleaned_data["sha1sum"]
+            self.instance.active = True
 
         return self.cleaned_data
 

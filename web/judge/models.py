@@ -11,7 +11,8 @@ class Submission( models.Model ):
     sha1sum = models.CharField( max_length=100 )
     name = models.CharField(max_length=100)
     data = models.FileField( upload_to='bots' )
-    comments = models.TextField()
+    active = models.BooleanField()
+    comments = models.TextField(null=True, blank=True)
 
     def get_score(self):
         # Compute score

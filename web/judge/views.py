@@ -29,10 +29,16 @@ def manage(request):
         form = forms.SubmissionForm(data=data, files=file_data, instance=sub)
         if form.is_valid():
             form.save()
+            # Set the first 5 bots 'active', and make all the rest inactive
+            bots = models.Submission.objects.filter(team = request.session["team"], active=True).order_by('-timestamp')
+            if len(bots) > settings.MAX_ACTIVE_BOTS:
+                for bot in bots[settings.MAX_ACTIVE_BOTS:]: 
+                    bot.active = False
+                    bot.save()
     else:
         form = forms.SubmissionForm()
 
-    submissions = models.Submission.objects.filter(team = request.session["team"])
+    submissions = models.Submission.objects.filter(team = request.session["team"]).order_by('-timestamp')
 
     return render_to_response("manage.html", 
             {'form':form,
@@ -40,7 +46,6 @@ def manage(request):
             context_instance = RequestContext(request))
 
 def standings(request):
-
     # Get the best bot for every team
     # TODO: Make query more efficient
     scores = {}
@@ -66,8 +71,8 @@ def results(request, bot_id=None, page=1):
             runs = bot.player1_runset.all() | bot.player2_runset.all()
             runs = runs.order_by('-timestamp')
         except exceptions.ObjectDoesNotExist:
-            message.error(request, "No bot by that id exists")
-            runs = models.Run.objects.order_by('-timestamp')
+            messages.error(request, "No bot by that id exists")
+            return HttpResponseRedirect("/judge/results/all/")
     else:
         runs = models.Run.objects.order_by('-timestamp')
 

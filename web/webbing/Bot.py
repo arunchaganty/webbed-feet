@@ -5,13 +5,14 @@ import MySQLdb
 
 class Bot:
     """Wrapper about a bot's db instance"""
-    def __init__(self, db, bot_id, team_id, timestamp, checksum, name, path, comments):
+    def __init__(self, db, bot_id, team_id, timestamp, checksum, name, path, active, comments):
         self.bot_id = bot_id
         self.team_id = team_id
         self.timestamp = timestamp
         self.checksum = checksum
         self.name = name
         self.path = path
+        self.active = active
         self.comments = comments
 
         self.__db = db 
@@ -58,10 +59,6 @@ class BotDb:
         """Get all the submitted bots"""
         pass
 
-    def filter(self, **kwargs):
-        """Get some of the submitted bots"""
-        pass
-    
     def get(self, id):
         """Get a submitted bot"""
         pass
@@ -85,21 +82,11 @@ class SQLBotDb(BotDb):
     def all(self):
         """Get all the submitted bots"""
 
-        query = "SELECT * FROM %s ORDER BY timestamp DESC"%(self.submissionTable,)
+        query = "SELECT * FROM %s WHERE `active`=1 ORDER BY timestamp DESC"%(self.submissionTable,)
         cursor = self.execute(query)
 
         return [ Bot(self,*b) for b in cursor ]
 
-    def filter(self, **kwargs):
-        """Get some of the submitted bots"""
-        query = "SELECT * FROM %s WHERE "%(self.submissionTable,)
-        for key,value in kwargs.items():
-            query += "? = ? "%(key,value)
-        query += " ORDER BY timestamp DESC"
-        cursor = self.execute(query)
-
-        return [ Bot(self,*b) for b in cursor ]
-    
     def get(self, id):
         """Get a submitted bot"""
 
