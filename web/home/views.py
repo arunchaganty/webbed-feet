@@ -25,21 +25,6 @@ def home(request):
 def ping(request):
     return HttpResponse("")
 
-def register(request):
-    if request.POST:
-        data = request.POST
-        form = forms.TeamRegistrationForm(data)
-        if form.is_valid():
-            team = models.Team.objects.create_user(
-                    form.cleaned_data['name'], form.cleaned_data['email'], form.cleaned_data['password'])
-            return HttpResponseRedirect('/home/')
-    else:
-        form = forms.TeamRegistrationForm(None)
-
-    return render_to_response("register.html", 
-            {'form':form,},
-            context_instance = RequestContext(request))
-
 def login(request):
     return home(request)
 

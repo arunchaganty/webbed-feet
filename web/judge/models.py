@@ -2,11 +2,11 @@ from django.db import models
 
 import operator
 
-from web.home import models as home_models
+from web.registration import models as r_models
 from web.webbing import errors
 
 class Submission( models.Model ):
-    team = models.ForeignKey( home_models.Team )
+    team = models.ForeignKey( r_models.Team )
     timestamp = models.DateTimeField( auto_now = True )
     sha1sum = models.CharField( max_length=100 )
     name = models.CharField(max_length=100)
