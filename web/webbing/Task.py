@@ -136,6 +136,6 @@ class GameRunTask(ThreadedTask):
 
         run = Bot.Run(datetime.now(), self.__player1, self.__player2, score, status, log_path)
         db = self.taskManager.db
-        query = db.addRun(run)
+        query = db.insertRunQuery(run)
         self.taskManager.addTask(DBTask(query))
 

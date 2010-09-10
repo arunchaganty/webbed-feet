@@ -1,6 +1,7 @@
 # Wrapper to access a Task from the database.
 
 import sqlite3
+import MySQLdb
 
 class Bot:
     """Wrapper about a bot's db instance"""
@@ -71,52 +72,38 @@ class BotDb:
     def add_run(self, run):
         pass
 
-class SQLiteBotDb(BotDb):
-    def __init__(self, filename):
-        self.__conn = sqlite3.Connection(filename)
-        # HACK!
-        self.__submissionTable = "judge_submission"
-        self.__runTable = "judge_run"
+class SQLBotDb(BotDb):
+    def __init__(self, conn, submissionTable, runTable):
+        self.conn = conn
+        self.submissionTable = submissionTable
+        self.runTable = runTable
 
-    def __getitem__(self, idx):
-        query = "SELECT * FROM %s ORDER BY timestamp DESC LIMIT %d,1"%(self.__submissionTable, idx)
-        cursor = self.execute(query)
-        b = cursor.fetchone()
-
-        if b:
-            return Bot(self,*b)
-        else:
-            return None
-
-    def __iter__(self):
-        query = "SELECT * FROM %s ORDER BY timestamp DESC"%(self.__submissionTable,)
-        cursor = self.execute(query)
-
-        for b in cursor:
-            yield Bot(self,*b)
-
-    def __len__(self):
-        return self.get_count()
-
-    # Interface functions
+    def execute(self, query):
+        print query
+        pass
 
     def all(self):
-        query = "SELECT * FROM %s"%(self.__submissionTable,)
+        """Get all the submitted bots"""
+
+        query = "SELECT * FROM %s ORDER BY timestamp DESC"%(self.submissionTable,)
         cursor = self.execute(query)
 
         return [ Bot(self,*b) for b in cursor ]
 
     def filter(self, **kwargs):
-        query = "SELECT * FROM %s WHERE "%(self.__submissionTable,)
+        """Get some of the submitted bots"""
+        query = "SELECT * FROM %s WHERE "%(self.submissionTable,)
         for key,value in kwargs.items():
             query += "? = ? "%(key,value)
-        print query
+        query += " ORDER BY timestamp DESC"
         cursor = self.execute(query)
 
         return [ Bot(self,*b) for b in cursor ]
-
+    
     def get(self, id):
-        query = "SELECT * FROM %s WHERE id = %d"%(self.__submissionTable, id)
+        """Get a submitted bot"""
+
+        query = "SELECT * FROM %s WHERE id = %d"%(self.submissionTable, id)
         print query
         cursor = self.execute(query)
         b = cursor.fetchone()
@@ -129,8 +116,7 @@ class SQLiteBotDb(BotDb):
     def min(self):
         query = """SELECT bot.*, COUNT(run.id) as count FROM %s as bot,
         %s as run WHERE run.player1_id = bot.id OR run.player2_id =
-        bot.id GROUP BY bot.id ORDER BY count LIMIT 1;"""%(self.__submissionTable, self.__runTable)
-        print query
+        bot.id GROUP BY bot.id ORDER BY count LIMIT 1;"""%(self.submissionTable, self.runTable)
         cursor = self.execute(query)
         b = cursor.fetchone()
 
@@ -140,28 +126,44 @@ class SQLiteBotDb(BotDb):
         else: 
             return None
 
-    def get_count(self, bot = None):
+    def getCount(self, bot = None):
         if bot == None:
-            query = "SELECT COUNT(*) FROM %s"%(self.__submissionTable,)
+            query = "SELECT COUNT(*) FROM %s"%(self.submissionTable,)
             cursor = self.execute(query)
             e = cursor.fetchone()
             return e[0]
         else:
-            query = "SELECT COUNT(*) FROM %s WHERE player1_id = %d or player2_id = %d"%(self.__runTable, bot.bot_id, bot.bot_id)
+            query = "SELECT COUNT(*) FROM %s WHERE player1_id = %d or player2_id = %d"%(self.runTable, bot.bot_id, bot.bot_id)
             cursor = self.execute(query)
             r = cursor.fetchone()
             return r[0]
 
-    def addRun(self, run):
+    def insertRunQuery(self, run):
         value_str = "(NULL, '%s', %d, %d, %d, '%s', '%s')"%(run.timestamp, run.player1.bot_id, 
                 run.player2.bot_id, run.score, run.status, run.game_data)
-        query = "INSERT INTO %s VALUES %s"%(self.__runTable, value_str)
+        query = "INSERT INTO %s VALUES %s"%(self.runTable, value_str)
         return query
-    
+
+class SQLiteBotDb(SQLBotDb):
+    def __init__(self, filename):
+        conn = sqlite3.Connection(filename)
+        SQLBotDb.__init__(self, conn, "judge_submission", "judge_run")
+
     def execute(self, query):
         print query
-        cursor = self.__conn.execute(query)
-        self.__conn.commit()
+        cursor = self.conn.execute(query)
+        self.conn.commit()
         return cursor
 
-        
+class MySQLBotDb(SQLBotDb):
+    def __init__(self, host, user, passwd, db):
+        conn = MySQLdb.connect(host=host, user=user, passwd=passwd, db=db)
+        SQLBotDb.__init__(self, conn, "judge_submission", "judge_run")
+
+    def execute(self, query):
+        print query
+        cursor = self.conn.cursor()
+        cursor.execute(query)
+        self.conn.commit()
+        return cursor
+
