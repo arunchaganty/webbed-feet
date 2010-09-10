@@ -1,8 +1,8 @@
 from django import forms
 from django.db import models as d_models
 
-import game
 from web.webbing import errors
+from web.webbing import Game
 
 import settings
 import models
@@ -13,7 +13,7 @@ class SubmissionForm( forms.ModelForm ):
     data = forms.FileField(label="Bot Binary")
     class Meta:
         model = models.Submission
-        exclude = ('timestamp', 'team', 'sha1sum', 'active')
+        fields = ('game', 'name', 'data', 'comments')
 
     def clean(self):
         forms.ModelForm.clean(self)
@@ -29,18 +29,34 @@ class SubmissionForm( forms.ModelForm ):
 
         return self.cleaned_data
 
+    def clean_name(self):
+        name = self.cleaned_data["name"]
+
+        if len(models.Submission.objects.filter(team=self.instance.team, name=name)) > 0:
+            raise forms.ValidationError("You already have a bot by this name")
+        
+        return name
+
     def clean_sha1sum(self):
         data = self.cleaned_data["data"]
         self.cleaned_data["sha1sum"] = hashlib.sha1(data.read()).hexdigest()
 
     def clean_data(self):
+        game = self.cleaned_data["game"]
+
+        # Get the game class
+        try:
+            cls = getattr(Game, game.classname)
+        except AttributeError:
+            raise forms.ValidationError("Error loading game. Please contact event coordinators")
+
         data = self.cleaned_data["data"]
-        if game.BOT_SUBMISSION_HOOK != None:
-            # Pass the data through the hook
-            try:
-                data = game.BOT_SUBMISSION_HOOK(data)
-            except errors.GameError as e:
-                raise forms.ValidationError(str(e))
+
+        try:
+            data = cls.submissionHook(data)
+        except errors.GameError as e:
+            raise forms.ValidationError(str(e))
+
         return data
 
 

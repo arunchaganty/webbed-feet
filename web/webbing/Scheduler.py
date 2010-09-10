@@ -3,6 +3,7 @@
 
 import random
 import Task
+import Game
 
 class Scheduler:
     def __init__(self, pool):
@@ -27,7 +28,7 @@ class MinRunScheduler(Scheduler):
             random.shuffle(players)
             print players
 
-            yield Task.GameRunTask(*players)
+            yield Task.GameRunTask(Game.SnakeGame, *players)
 
 class CompetitionScheduler(Scheduler):
     """Schedules games so that all bots play all other bots exactly once"""

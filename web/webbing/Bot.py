@@ -5,23 +5,27 @@ import MySQLdb
 
 class Bot:
     """Wrapper about a bot's db instance"""
-    def __init__(self, db, bot_id, team_id, timestamp, checksum, name, path, active, comments):
-        self.bot_id = bot_id
+
+    def __init__(self, db, id, game_id, team_id, timestamp, sha1sum, name, data, comments, active, count, score):
+        self.id = id
+        self.game_id = game_id
         self.team_id = team_id
         self.timestamp = timestamp
-        self.checksum = checksum
+        self.sha1sum = sha1sum
         self.name = name
-        self.path = path
-        self.active = active
+        self.data = data
         self.comments = comments
+        self.active = active
+        self.count = count
+        self.score = score
 
         self.__db = db 
 
     def __repr__(self):
-        return "[Bot #%d]"%(self.bot_id)
+        return "[Bot #%d]"%(self.id)
 
     def __str__(self):
-        return "Bot #%d"%(self.bot_id)
+        return "Bot #%d"%(self.id)
     
     def get_count(self):
         """Get number of plays"""
@@ -120,17 +124,42 @@ class SQLBotDb(BotDb):
             e = cursor.fetchone()
             return e[0]
         else:
-            query = "SELECT COUNT(*) FROM %s WHERE player1_id = %d or player2_id = %d"%(self.runTable, bot.bot_id, bot.bot_id)
+            query = "SELECT COUNT(*) FROM %s WHERE player1_id = %d or player2_id = %d"%(self.runTable, bot.id, bot.id)
             cursor = self.execute(query)
             r = cursor.fetchone()
             return r[0]
 
     def insertRunQuery(self, run):
-        value_str = "(NULL, '%s', %d, %d, %d, '%s', '%s')"%(run.timestamp, run.player1.bot_id, 
-                run.player2.bot_id, run.score, run.status, run.game_data)
+        value_str = "(NULL, '%s', %d, %d, %d, '%s', '%s')"%(run.timestamp, run.player1.id, 
+                run.player2.id, run.score, run.status, run.game_data)
         query = "INSERT INTO %s VALUES %s"%(self.runTable, value_str)
         return query
 
+    def updateScoreQuery(self, run):
+        """ Update bot scores """
+        score = run.score
+
+        if score > 0:
+            player1, player2 = run.player1, run.player2
+        else:
+            player2, player1 = run.player1, run.player2
+
+        count = player1.count + 1
+
+        score = (score + player1.score * player1.count) / float(count)
+        query1 = "UPDATE %s SET `score` = %f, `count` = %d WHERE `id` = %d"%(self.submissionTable, score, count, player1.id)
+
+        count = player2.count + 1
+        score = (0 + player2.score * player2.count) / float(count)
+
+        query2 = "UPDATE %s SET `score` = %f, `count` = %d WHERE `id` = %d"%(self.submissionTable, score, count, player2.id)
+
+        if player1 == player2:
+            return (query1,)
+        else:
+            return query1, query2
+
+        
 class SQLiteBotDb(SQLBotDb):
     def __init__(self, filename):
         conn = sqlite3.Connection(filename)
@@ -138,7 +167,12 @@ class SQLiteBotDb(SQLBotDb):
 
     def execute(self, query):
         print query
-        cursor = self.conn.execute(query)
+        # Handle lists
+        if type(query) == list:
+            for q in query:
+                cursor = self.conn.execute(q)
+        else:
+            cursor = self.conn.execute(query)
         self.conn.commit()
         return cursor
 
@@ -150,7 +184,13 @@ class MySQLBotDb(SQLBotDb):
     def execute(self, query):
         print query
         cursor = self.conn.cursor()
-        cursor.execute(query)
-        self.conn.commit()
+        # Handle lists
+        if type(query) == list:
+            for q in query:
+                cursor.execute(q)
+                self.conn.commit()
+        else:
+            cursor.execute(query)
+            self.conn.commit()
         return cursor
 

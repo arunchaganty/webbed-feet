@@ -5,44 +5,32 @@ import operator
 from web.registration import models as r_models
 from web.webbing import errors
 
+class Game( models.Model ):
+    name = models.CharField( max_length=100 )
+    classname = models.CharField( max_length=100 )
+
+    def __str__(self):
+        return self.name
+
 class Submission( models.Model ):
+    game = models.ForeignKey( Game )
     team = models.ForeignKey( r_models.Team )
+
     timestamp = models.DateTimeField( auto_now = True )
     sha1sum = models.CharField( max_length=100 )
+
     name = models.CharField(max_length=100)
     data = models.FileField( upload_to='bots' )
-    active = models.BooleanField()
     comments = models.TextField(null=True, blank=True)
 
-    def get_score(self):
-        # Compute score
-        player1RunsCount = Run.objects.filter(player1=self).count()
-        player2RunsCount = Run.objects.filter(player2=self).count()
-        player1Runs = Run.objects.filter(player1=self, score__gt=0)
-        player2Runs = Run.objects.filter(player2=self, score__lt=0)
+    active = models.BooleanField()
 
-        score = 0
-        # When player 1, +ve score is good; when player 2, -ve score is good
-        if len(player1Runs) > 0:
-            score += reduce(operator.add, [ run.score for run in player1Runs ])
-        if len(player2Runs) > 0:
-            score += reduce(operator.add, [ -1*run.score for run in player2Runs ])
-        count = player1RunsCount + player2RunsCount
+    count = models.IntegerField(default=0)
+    score = models.FloatField(default=0)
 
-        # Compute mean score
-        if count > 0:
-            score = float(score)/count
-
-        return score
-    score = property(get_score)
-
-    def get_runCount(self):
-        # Compute score
-        player1Runs = Run.objects.filter(player1=self).count()
-        player2Runs = Run.objects.filter(player2=self).count()
-
-        return player1Runs + player2Runs
-    runCount = property(get_runCount)
+    def update_score(self, score):
+        self.score = (score  + self.count * self.score) / (self.count + 1)
+        self.count += 1
 
     def __unicode__(self):
         return "[Submission %s]"%(self.sha1sum)
