@@ -3,17 +3,17 @@
 {% block body %}
 <div id="standings">
 <h2>Standings</h2>
-{% if scores %}
+{% if standings %}
     <table id="scores" class="results">
       <thead>
         <th>Position</th> <th>Team</th> <th>Score</th>
       </thead>
     <tbody>
-    {% for score in scores %}
+    {% for team in standings %}
     <tr>
-      <td><b>{{score.0}}</b></td>
-      <td>{{score.1}}</td>
-      <td>{{score.2}}</td>
+      <td><b>{{forloop.counter}}</b></td>
+      <td>{{team}}</td>
+      <td>{{team.score}}</td>
     {% endfor %}
     </tbody>
     </table>

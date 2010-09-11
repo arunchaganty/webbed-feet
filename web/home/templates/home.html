@@ -6,12 +6,10 @@
     <tr>
       <td>
         <p id="description">
-        <b>Webbed Feet</b> is a <i>AI competition judge</i> created to evaluate
-        AI bots created for the "Artificial Intelligence" course taken by Dr.
-        Deepak Khemani.
+        <b>Webbed Feet</b> is a <i>competition judge</i> created to evaluate AI bots created for the <a href="http://www.cse.iitm.ac.in/~cs638/">"Artificial Intelligence"</a> course taken by <a href="http://www.cse.iitm.ac.in/khemani/">Dr. Deepak Khemani</a>. It is also being used as the judge for <a href="http://www.shaastra.org/2010/main/events/coding/automania">Automania</a> at Shaastra 2010. You can obtain the source code <a href="http://github.com/arunchaganty/webbed-feet">here</a>.
 
-        {{team}}
-        <!-- More material about the judge -->
+        To participate, please register on the <a href="http://www.shaastra.org/userportal/">Userportal</a> first, and then login using the form to your right. You will then be able to upload your bot(s), and view the results as they are played against other bots.
+
         </p>
       </td>
       <td>
@@ -34,7 +32,7 @@
           </form>
         </div>
         {% else %}
-        <div id="help">
+        <div id="quick-links">
           <!-- Quick Links -->
           <h3>Welcome {{team}}</h3>
           <h4>Quick Links</h4>
@@ -48,9 +46,9 @@
           <table>
             <thead></thead>
             <tbody>
-              <tr><td>Bots Submitted:</td><td>0</td></tr>
-              <tr><td>Current Standing:</td><td>0</td></tr>
-              <tr><td>Current Score:</td><td>0</td></tr>
+              <tr><td>Bots Submitted:</td><td>{{botCount}}</td></tr>
+              <tr><td>Current Standing:</td><td>{{standing}}</td></tr>
+              <tr><td>Current Score:</td><td>{{score}}</td></tr>
             </tbody>
           </table>
         </div>

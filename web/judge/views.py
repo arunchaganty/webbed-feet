@@ -10,6 +10,8 @@ from django.core.paginator import Paginator, InvalidPage, EmptyPage
 import forms
 import models
 import web.registration.models as r_models
+import web.events.models as e_models
+from django.db.models import Max
 
 from django.core import exceptions
 
@@ -47,21 +49,15 @@ def manage(request):
 
 def standings(request):
     # Get the best bot for every team
-    # TODO: Make query more efficient
-    scores = {}
-    bots = models.Submission.objects.all()
-    for team in r_models.Team.objects.all():
-        # Get bots' scores
-        s = map( lambda t: t.score, bots.filter(team = team))
-        if s:
-            scores[team] = max(s)
-    
-    scores = scores.items()
-    scores.sort(key=lambda ts: ts[1], reverse=True)
-    scores = [ (p,) + s for (p,s) in zip(range(1,len(scores)+1), scores) ]
-        
+    event = e_models.TeamEvent.objects.get(name=settings.EVENT_NAME)
+    teams = event.teams.all()
+    teams = teams.annotate(score = Max('submission__score'))
+
+    standings = list(teams)
+    standings.sort(lambda t: t.score, reverse=True)
+
     return render_to_response("standings.html", 
-            {'scores':scores},
+            {'standings':standings},
             context_instance = RequestContext(request))
 
 def results(request, bot_id=None, page=1):
