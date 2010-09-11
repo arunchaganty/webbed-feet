@@ -56,7 +56,7 @@ class WebbedFeetTable:
         return [ GameTable(self, *g) for g in cursor ]
 
 class GameTable:
-    def __init__(self, webbedFeetTable, game_id, name, cls, active):
+    def __init__(self, webbedFeetTable, game_id, name, cls, active, weight):
         self.db = webbedFeetTable.db
         self.tables = webbedFeetTable.tables
 
@@ -65,6 +65,7 @@ class GameTable:
         self.name = name
         self.cls = cls
         self.active = active
+        self.weight = weight
 
     def getClass(self):
         cls = getattr(Game, self.cls)

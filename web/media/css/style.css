@@ -132,7 +132,7 @@ tr.light {
 }
 
 tr.dark {
-  background: #E0B8FF;
+  background: #BDE5F8;
 }
 
 /* Message windows */
@@ -145,8 +145,8 @@ ul.errorlist li
   border-top: thin solid #D8000C;
   border-bottom: thin solid #D8000C;
   background-color:#FFBABA;
-  color:
   list-style: none;
+  padding: 5px;
 }
 
 .error
@@ -166,6 +166,7 @@ ul.messages li.error
   border-bottom: thin solid #D8000C;
   background-color:#FFBABA;
   list-style: none;
+  padding: 5px;
 }
 
 ul.messages li.info
@@ -174,6 +175,7 @@ ul.messages li.info
   border-bottom: solid thin #00529B;
   background-color: #BDE5F8;
   list-style: none;
+  padding: 5px;
 }
 
 /* Pagination */

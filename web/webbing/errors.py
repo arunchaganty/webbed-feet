@@ -3,7 +3,7 @@ Defines the various errors that can be handled.
 """
 
 STATUS = (
-    ('OK', 'No Errors'),
+    ('OK', 'Ok'),
     ('DQ1', 'Player 1 Disqualified'),
     ('DQ2', 'Player 2 Disqualified'),
     ('TO1', 'Player 1 Timed Out'),

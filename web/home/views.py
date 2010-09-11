@@ -34,7 +34,7 @@ def home(request):
         teams = event.teams.all()
         teams = teams.annotate(score = Max('submission__score'))
         standings = list(teams)
-        standings.sort(lambda t: t.score, reverse=True)
+        standings.sort(key = lambda t: t.score, reverse=True)
         standing = standings.index(team)
         score = standings[standing].score
 

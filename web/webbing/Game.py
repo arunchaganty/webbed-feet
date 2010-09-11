@@ -7,6 +7,7 @@ import subprocess
 from datetime import datetime
 
 import Bot
+import errors
 import gbl
 
 class Game:
