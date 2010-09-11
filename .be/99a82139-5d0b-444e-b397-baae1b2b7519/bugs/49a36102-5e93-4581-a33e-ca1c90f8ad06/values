@@ -7,11 +7,11 @@ reporter: Arun Tejasvi Chaganty <arunchaganty@gmail.com>
 severity: minor
 
 
-status: fixed
+status: open
 
 
-summary: Paginate bot results
+summary: Add game-wise standings
 
 
-time: Wed, 08 Sep 2010 21:46:34 +0000
+time: Sat, 11 Sep 2010 01:39:38 +0000
 

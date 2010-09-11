@@ -94,9 +94,7 @@ class GameRunTask(ThreadedTask):
     def run(self):
         run = self.game.runHook(self.player1, self.player2)
 
-        db = self.taskManager.db
-        queries = []
-        queries.append( db.insertRunQuery(run) )
-        queries += db.updateScoreQuery(run)
+        db = self.game.db
+        queries = db.getInsertRunQuery(run)
         self.taskManager.addTask(DBTask(queries))
 

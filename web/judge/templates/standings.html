@@ -3,6 +3,12 @@
 {% block body %}
 <div id="standings">
 <h2>Standings</h2>
+  <p>Gamewise: 
+    {% for game in games %} 
+    <a href="/judge/standings/game/{{game.name}}/"> {{game.name}}</a> &middot; 
+    {% endfor %}
+    <a href="/judge/standings/all/">All</a>
+  </p>
 {% if standings %}
     <table id="scores" class="results">
       <thead>
@@ -12,7 +18,7 @@
     {% for team in standings.object_list %}
     <tr class="{% cycle 'dark' 'light' %}">
       <td><b>{{forloop.counter}}</b></td>
-      <td>{{team}}</td>
+      <td>{{team.team__name}}</td>
       <td>{{team.score}}</td>
     {% endfor %}
     </tbody>

@@ -2,7 +2,23 @@
 
 {% block body %}
 <div id="standings">
-  <h2>Match Results {%if bot %} For Bot '{{bot.name}}' {%endif%}</h2>
+  {% if bot %}
+  <h2>Match Results For Bot '{{bot.name}}' </h2>
+  {% else %}
+    {% if game %}
+    <h2>Match Results For Game '{{game.name}}'</h2>
+    {% else %}
+    <h2>Match Results </h2>
+    {% endif %}
+  {% endif %}
+
+  <p>Gamewise: 
+    {% for game in games %} 
+    <a href="/judge/results/game/{{game.name}}/"> {{game.name}}</a> &middot; 
+    {% endfor %}
+    <a href="/judge/results/all/">All</a>
+  </p>
+
   <p>To replay the match, you can download the log file</p>
   {% if messages %}
   <div id="messages">
@@ -18,7 +34,7 @@
 {% if runs %}
     <table id="results" class="results">
       <thead>
-        <th>Timestamp</th> <th>Team 1</th> <th>Team 2</th> <th>Status</th> <th>Score</th><th>Log File</th> 
+        <th>Timestamp</th> <th>Team 1 (Bot Name)</th> <th>Team 2 (Bot Name)</th> <th>Status</th> <th>Score</th><th>Log File</th> 
       </thead>
     <tbody>
     {% for run in runs.object_list %}

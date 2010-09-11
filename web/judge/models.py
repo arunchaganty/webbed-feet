@@ -8,6 +8,8 @@ from web.webbing import errors
 class Game( models.Model ):
     name = models.CharField( max_length=100 )
     classname = models.CharField( max_length=100 )
+    active = models.BooleanField(default=True)
+    weight = models.FloatField(default=1.0)
 
     def __str__(self):
         return self.name

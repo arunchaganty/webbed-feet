@@ -1,28 +1,30 @@
 # Task Manager
 
-import subprocess
 import os
 import time
+import random
+import subprocess
 
 import gbl
 
 class TaskManager:
     period = -1 
     parallelism=1
+
     threads = []
-    scheduler = []
-    source = [].__iter__()
+    sources = []
     tasks = []
 
-
-    def __init__(self, scheduler, db, period = gbl.MAINLOOP_PERIOD, parallelism=1):
+    def __init__(self, db, period = gbl.MAINLOOP_PERIOD, parallelism=1):
+        self.db = db
         self.period = period
         self.parallelism = parallelism
-        self.scheduler = scheduler
-        self.db = db
-        self.source = scheduler.__iter__()
+
+    def addGenerator(self, generator):
+        self.sources.append(generator.__iter__())
 
     def addTask(self, task):
+        """Add an immediate task"""
         self.tasks.append(task)
         
     def loopCondition(self):
@@ -41,10 +43,13 @@ class TaskManager:
         # Launch threads if possible
         if len(self.threads) < self.parallelism:
             try:
+                # First process immediate tasks
                 if len(self.tasks) > 0:
                     task = self.tasks.pop(0)
                 else:
-                    task = self.source.next()
+                    # Else generate something from one of the generators
+                    source = random.choice(self.sources)
+                    task = source.next()
                 self.threads.append(task)
                 task.taskManager = self
                 task.start()
@@ -53,7 +58,8 @@ class TaskManager:
         return
 
     def run(self):
-        while self.loopCondition():
-            self.loop()
+        while True:
+            if self.loopCondition():
+                self.loop()
             time.sleep(self.period)
 

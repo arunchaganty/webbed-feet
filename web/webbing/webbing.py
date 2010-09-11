@@ -9,7 +9,7 @@ import gbl
 
 from TaskManager import TaskManager
 import Scheduler
-import Bot
+import Db
 
 _opener = urllib.URLopener(proxies={})
 
@@ -31,9 +31,12 @@ def server_alive():
 
 def main():
     # Add to a work queue. 
-    db =  Bot.MySQLBotDb("localhost", "root", "teju", "judge")
-    scheduler = Scheduler.MinRunScheduler(db)
-    manager = TaskManager(scheduler, db)
+    db =  Db.MySQLDb("localhost", "root", "teju", "judge")
+    tbl = Db.WebbedFeetTable(db, game="judge_game", submission="judge_submission", run="judge_run")
+
+    schedulers = [Scheduler.MinRunScheduler(game) for game in tbl.getGames()]
+    manager = TaskManager(db)
+    for generator in schedulers: manager.addGenerator(generator)
     manager.loopCondition = server_alive
 
     manager.run()

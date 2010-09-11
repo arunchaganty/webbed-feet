@@ -48,14 +48,35 @@ def manage(request):
             'submissions':submissions},
             context_instance = RequestContext(request))
 
-def standings(request, page=1):
-    # Get the best bot for every team
-    event = e_models.TeamEvent.objects.get(name=settings.EVENT_NAME)
-    teams = event.teams.all()
-    teams = teams.annotate(score = Max('submission__score'))
+def standings(request, page=1, gameName=None):
+    games = models.Game.objects.all()
 
-    standings = list(teams)
-    standings.sort(lambda t: t.score, reverse=True)
+
+    if gameName:
+        try: 
+            game = games.get(name=gameName)
+            # Get the best bot for every team
+            submissions = models.Submission.objects.filter(game = game)
+            teams = submissions.values("team__name").annotate(score=Max('score')).order_by('-score')
+
+            standings = list(teams)
+        except exceptions.ObjectDoesNotExist:
+            messages.error(request, "No game by that name exists")
+            return HttpResponseRedirect("/judge/standings/all/")
+    else:
+        team_score = {}
+        for game in games:
+            # Get the best bot for every team
+            submissions = models.Submission.objects.filter(game=game)
+            teams = submissions.values("team__name").annotate(score=Max('score'))
+            for team in teams:
+                if not team_score.has_key(team["team__name"]):
+                    team_score[team["team__name"]] = 0
+                team_score[team["team__name"]] += team["score"] * game.weight
+
+        teams = team_score.items()
+        teams.sort(key=lambda kv: kv[1], reverse=True)
+        standings = [{'team__name':kv[0], 'score':kv[1]} for kv in teams]
 
     paginator = Paginator( standings, TEAMS_PER_PAGE )
     try:
@@ -63,12 +84,28 @@ def standings(request, page=1):
     except:
         displayed_teams = paginator.page(paginator.num_pages)
 
-    return render_to_response("standings.html", 
-            {'standings':displayed_teams},
+    return render_to_response("standings.html", {
+        'standings':displayed_teams,
+        'games':games,
+        
+        },
             context_instance = RequestContext(request))
 
-def results(request, bot_id=None, page=1):
-    if bot_id != None:
+def results(request, bot_id=None, page=1, gameName=None):
+    # Game
+    bot = None
+    game = None
+    games = models.Game.objects.all()
+
+    if gameName != None:
+        try:
+            game = models.Game.objects.get(name=gameName)
+            runs = models.Run.objects.filter(player1__game=game)
+            runs = runs.order_by('-timestamp')
+        except exceptions.ObjectDoesNotExist:
+            messages.error(request, "No game by that name exists")
+            return HttpResponseRedirect("/judge/results/all/")
+    elif bot_id != None:
         try:
             bot = models.Submission.objects.get(id=bot_id)
             runs = bot.player1_runset.all() | bot.player2_runset.all()
@@ -77,7 +114,6 @@ def results(request, bot_id=None, page=1):
             messages.error(request, "No bot by that id exists")
             return HttpResponseRedirect("/judge/results/all/")
     else:
-        bot = None
         runs = models.Run.objects.order_by('-timestamp')
 
     # Paginate results
@@ -89,6 +125,8 @@ def results(request, bot_id=None, page=1):
 
     return render_to_response("results.html", {
             'bot': bot,
+            'game': game,
+            'games': games,
             'runs':displayed_runs,
             'paginator':paginator,
             },
