@@ -12,14 +12,6 @@
     {% endif %}
   {% endif %}
 
-  <p>Gamewise: 
-    {% for game in games %} 
-    <a href="/judge/results/game/{{game.name}}/"> {{game.name}}</a> &middot; 
-    {% endfor %}
-    <a href="/judge/results/all/">All</a>
-  </p>
-
-  <p>To replay the match, you can download the log file</p>
   {% if messages %}
   <div id="messages">
   <ul class="messages">
@@ -30,6 +22,14 @@
   </div>
   {% endif %}
 
+  <p>Gamewise: 
+    {% for game in games %} 
+    <a href="/judge/results/game/{{game.name}}/"> {{game.name}}</a> &middot; 
+    {% endfor %}
+    <a href="/judge/results/all/">All</a>
+  </p>
+
+  <p>To replay the match, you can download the log file</p>
 
 {% if runs %}
     <table id="results" class="results">
