@@ -56,9 +56,18 @@ class SnakeGame(Game):
             raise errors.BuildError("Invalid zip file")
 
         # Copy files to buildnest
-        f.extract(cls.BOT_INPUT, path=cls.BUILDNEST)
-        if cls.BOT_HEADER in f.namelist():
-            f.extract(cls.BOT_HEADER, path=cls.BUILDNEST)
+
+        # Handle older versions of zipfile that do not contain 'extract'
+        if hasattr(f, "extract"):
+            f.extract(cls.BOT_INPUT, path=cls.BUILDNEST)
+            if cls.BOT_HEADER in f.namelist():
+                f.extract(cls.BOT_HEADER, path=cls.BUILDNEST)
+        else:
+            f_ = open(os.path.join(cls.BUILDNEST, cls.BOT_INPUT), "w")
+            f_.write(f.read(cls.BOT_INPUT))
+            if cls.BOT_HEADER in f.namelist():
+                f_ = open(os.path.join(cls.BUILDNEST, cls.BOT_HEADER), "w")
+                f_.write(f.read(cls.BOT_HEADER))
         
         # make in the buildnest
         p = subprocess.Popen(["make"], stderr=subprocess.PIPE, cwd=cls.BUILDNEST)
