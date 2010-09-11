@@ -54,7 +54,7 @@ class SubmissionForm( forms.ModelForm ):
 
         try:
             data = cls.submissionHook(data)
-        except errors.GameError as e:
+        except errors.GameError, e:
             raise forms.ValidationError(str(e))
 
         return data

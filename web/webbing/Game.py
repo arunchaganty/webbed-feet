@@ -105,7 +105,7 @@ class SnakeGame(Game):
                 log_out = os.path.join(gbl.BASE_LOCATION, log_path)
                 # Copy the log file to the log location
                 shutil.copy(log_in, log_out)
-        except StandardError as e:
+        except StandardError, e:
             print e
             log_path = ""
 
@@ -176,7 +176,7 @@ class OthelloGame(Game):
                 log_out = os.path.join(gbl.BASE_LOCATION, log_path)
                 # Copy the log file to the log location
                 shutil.copy(log_in, log_out)
-        except StandardError as e:
+        except StandardError, e:
             print e
             log_path = ""
 
