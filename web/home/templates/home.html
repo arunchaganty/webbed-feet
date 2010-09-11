@@ -7,8 +7,13 @@
       <td>
         <p id="description">
         <b>Webbed Feet</b> is a <i>competition judge</i> created to evaluate AI bots created for the <a href="http://www.cse.iitm.ac.in/~cs638/">"Artificial Intelligence"</a> course taken by <a href="http://www.cse.iitm.ac.in/khemani/">Dr. Deepak Khemani</a>. It is also being used as the judge for <a href="http://www.shaastra.org/2010/main/events/coding/automania">Automania</a> at Shaastra 2010. You can obtain the source code <a href="http://github.com/arunchaganty/webbed-feet">here</a>.
+        </p>
 
+        {% if not team %}
+        <p>
         To participate, please register on the <a href="http://www.shaastra.org/userportal/">Userportal</a> first, and then login using the form to your right. You will then be able to upload your bot(s), and view the results as they are played against other bots.
+        </p>
+        {% endif %}
 
         </p>
       </td>
