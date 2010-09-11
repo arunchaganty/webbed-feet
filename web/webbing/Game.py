@@ -10,6 +10,8 @@ import Bot
 import errors
 import gbl
 
+import zipfile
+
 class Game:
     @classmethod
     def submissionHook(cls, uploaded_file):
@@ -36,20 +38,28 @@ class SnakeGame(Game):
 
     BUILDNEST = "/home/teju/Projects/automania/buildnest/bots/"
     BOT_INPUT = "bot.cpp"
+    BOT_HEADER = "bot.h"
     BOT_OUTPUT = "bot.so"
 
     @classmethod 
     def submissionHook(cls, uploaded_file):
-        """Compile the submission"""
+        """Expect a tarball containing bot.cpp (and bot.h).
+        Compile the submission"""
+
+        # Read as a zipfile
         # Read the uploaded file
-        uploaded_file.seek(0)
+        try:
+            f = zipfile.ZipFile(uploaded_file)
+            if cls.BOT_INPUT not in f.namelist():
+                raise errors.BuildError("Zip file does not contain 'bot.cpp'")
+        except zipfile.BadZipfile:
+            raise errors.BuildError("Invalid zip file")
 
-        # Copy to the buildnest
-        botFile = open(os.path.join(cls.BUILDNEST, cls.BOT_INPUT), "w")
-        for chunk in uploaded_file.chunks():
-            botFile.write(chunk)
-        botFile.close()
-
+        # Copy files to buildnest
+        f.extract(cls.BOT_INPUT, path=cls.BUILDNEST)
+        if cls.BOT_HEADER in f.namelist():
+            f.extract(cls.BOT_HEADER, path=cls.BUILDNEST)
+        
         # make in the buildnest
         p = subprocess.Popen(["make"], stderr=subprocess.PIPE, cwd=cls.BUILDNEST)
         output = p.communicate()[1]
@@ -61,10 +71,16 @@ class SnakeGame(Game):
 
         # Save the output    
         botSo = open(os.path.join(cls.BUILDNEST, cls.BOT_OUTPUT), "r")
-        data = botSo.read()
+
+        # Clean up 
+        for name in [cls.BOT_INPUT, cls.BOT_HEADER]:
+            path = os.path.join(cls.BUILDNEST, cls.BOT_INPUT)
+            if os.path.exists(path):
+                os.remove(path)
 
         # TODO: Check compiled .so?
 
+        data = botSo.read()
         uploaded_file.truncate(0)
         uploaded_file.write(data)
         uploaded_file.close()
