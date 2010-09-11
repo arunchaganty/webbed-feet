@@ -26,7 +26,6 @@ def home(request):
             else:
                 return HttpResponseRedirect("/home/")
     elif request.session.has_key("team"):
-
         team = request.session["team"]
         bots = j_models.Submission.objects.filter(team=team)
         botCount = bots.count()
@@ -44,12 +43,13 @@ def home(request):
             'standing':standing + 1,
             'score':score,
             },
-                context_instance = RequestContext(request))
-    else:
+            context_instance = RequestContext(request))
+    else: 
         form = forms.LoginForm(None)
-        return render_to_response("home.html", 
-                {'form':form,},
-                context_instance = RequestContext(request))
+        
+    return render_to_response("home.html", 
+            {'form':form,},
+            context_instance = RequestContext(request))
 
 def ping(request):
     return HttpResponse("")

@@ -10,7 +10,7 @@ import models
 import hashlib
 
 class SubmissionForm( forms.ModelForm ):
-    data = forms.FileField(label="Bot Binary")
+    data = forms.FileField(label="Bot Code")
     class Meta:
         model = models.Submission
         fields = ('game', 'name', 'data', 'comments')

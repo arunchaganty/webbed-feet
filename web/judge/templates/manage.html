@@ -2,8 +2,11 @@
 
 {% block body %}
 <div>
-  <div id="add-submission">
+  <div id="add-submission" class="calm-blue2">
     <h2>Add a Submission</h2>
+    <p>
+    Please upload a single source code file containing the bot class.
+    </p>
     <form method="POST" action="" enctype="multipart/form-data">
       {% csrf_token %}
       <table>
@@ -20,24 +23,27 @@
     </div>
     <div id="view-submission">
     <h2>Existing Submissions</h2>
-    <p>Click bot for match details</p>
+    <p>Click bot for it's match details</p>
     {% if submissions %}
         <table id="submissions" class="results">
           <thead>
-            <th>Timestamp</th> 
             <th>Name</th>
-            <th>Run Count</th>
             <th>Average Score</th>
+            <th>Runs</th>
+            <th>Timestamp</th> 
+            <th>Status</th> 
             <th>Comments</th>
           </thead>
         <tbody>
         {% for submission in submissions %}
-        <tr>
-          <td><b>{{submission.timestamp}}</b></td>
-          <td><a href="/judge/results/bot/{{submission.id}}/">{{submission.name}}</a></td>
-          <td>{{submission.count}}</td>
+        <tr class="{% cycle 'dark' 'light' %}">
+          <td><b><a href="/judge/results/bot/{{submission.id}}/">{{submission.name}}</a></b></td>
           <td>{{submission.score}}</td>
+          <td>{{submission.count}}</td>
+          <td>{{submission.timestamp}}</td>
+          <td {%if not submission.active %} class="warning" {%endif%}> {% if submission.active %} Active {% else %} Inactive {% endif %}</td>
           <td>{{submission.comments}}</td>
+        </tr>
         {% endfor %}
         </tbody>
         </table>

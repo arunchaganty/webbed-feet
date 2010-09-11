@@ -20,6 +20,7 @@ from web import settings
 from web.home.decorators import login_required
 
 RUNS_PER_PAGE = 25
+TEAMS_PER_PAGE = 25
 
 
 @login_required()
@@ -47,7 +48,7 @@ def manage(request):
             'submissions':submissions},
             context_instance = RequestContext(request))
 
-def standings(request):
+def standings(request, page=1):
     # Get the best bot for every team
     event = e_models.TeamEvent.objects.get(name=settings.EVENT_NAME)
     teams = event.teams.all()
@@ -56,8 +57,14 @@ def standings(request):
     standings = list(teams)
     standings.sort(lambda t: t.score, reverse=True)
 
+    paginator = Paginator( standings, TEAMS_PER_PAGE )
+    try:
+        displayed_teams = paginator.page(page)
+    except:
+        displayed_teams = paginator.page(paginator.num_pages)
+
     return render_to_response("standings.html", 
-            {'standings':standings},
+            {'standings':displayed_teams},
             context_instance = RequestContext(request))
 
 def results(request, bot_id=None, page=1):
@@ -70,6 +77,7 @@ def results(request, bot_id=None, page=1):
             messages.error(request, "No bot by that id exists")
             return HttpResponseRedirect("/judge/results/all/")
     else:
+        bot = None
         runs = models.Run.objects.order_by('-timestamp')
 
     # Paginate results
@@ -80,7 +88,7 @@ def results(request, bot_id=None, page=1):
         displayed_runs = paginator.page(paginator.num_pages)
 
     return render_to_response("results.html", {
-            'bot_id':bot_id,
+            'bot': bot,
             'runs':displayed_runs,
             'paginator':paginator,
             },

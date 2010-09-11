@@ -20,16 +20,13 @@
       <td>
         <!-- Login -->
         {% if not team %}
-        <div id="login">
+        <div id="login" class="calm-blue">
           <form method="post" action="">
             {% csrf_token %}
             <h3>Login</h3>
             <table id="login_form">
               {{form.as_table}}
             </table>
-            <div class="centered">
-              <a href="{{UP_URL}}/">Register On the Userportal</a> 
-            </div>
             <br />
             <div class="right">
               <input type="submit" value="Login" />
@@ -37,23 +34,16 @@
           </form>
         </div>
         {% else %}
-        <div id="quick-links">
-          <!-- Quick Links -->
+        <div id="quicklinks" class="calm-blue">
           <h3>Welcome {{team}}</h3>
-          <h4>Quick Links</h4>
-          <ul>
-            <li><a href="/judge/manage/">Manage Submissions</a></li>
-            <li><a href="/judge/results/">View Results</a></li>
-            <li><a href="/judge/standings/">View Standings</a></li>
-          </ul>
           <!-- Display standings -->
           <h4>Statistics</h4>
           <table>
             <thead></thead>
             <tbody>
-              <tr><td>Bots Submitted:</td><td>{{botCount}}</td></tr>
               <tr><td>Current Standing:</td><td>{{standing}}</td></tr>
               <tr><td>Current Score:</td><td>{{score}}</td></tr>
+              <tr><td>Bots Submitted:</td><td>{{botCount}}</td></tr>
             </tbody>
           </table>
         </div>

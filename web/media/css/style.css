@@ -33,7 +33,7 @@ div#linkbar a {
 }
 
 div#linkbar a:hover {
-    font-weight: bold;
+    text-decoration: underline;
 }
 
 /* Logout */
@@ -73,28 +73,98 @@ span.right {
     text-align: right;
 }
 
+div.calm-blue {
+    border: solid 1px #943ADA;
+    background: #E0B8FF;
+}
+
+div.calm-blue2 {
+    border-top: solid 1px #943ADA;
+    border-bottom: solid 1px #943ADA;
+    background: #E0B8FF;
+    padding: 10px;
+}
+
+a.plain {
+    text-decoration: none;
+    color: inherit;
+}
+
+a.plain:hover {
+    text-decoration: underline;
+    color: inherit;
+}
+
+/* Home Page */
+
 table#home-table td {
     width: 50%;
 }
+
 
 div#login {
     width: 300px;
     margin: auto;
     padding: 10px;
-    border: solid 1px;
     height: 300px;
 }
 
-div#help {
+div#quicklinks {
     width: 300px;
     margin: auto;
     padding: 10px;
-    border: solid 1px;
     height: 300px;
 }
 
 table.results td,th {
     min-width: 80px;
+    text-align: right;
+}
+
+tr.light {
+    background: white;
+}
+
+tr.dark {
+    background: #E0B8FF;
+}
+
+/* Message windows */
+ul.errorlist 
+{
+    padding: 0;
+}
+ul.errorlist li 
+{
+    border-top: thin solid #3ADA94;
+    border-bottom: thin solid #3ADA94;
+    background: #B8FFE0;
+    list-style: none;
+}
+    
+ul.messages 
+{
+    padding: 0;
+}
+ul.messages li.error
+{
+    border-top: thin solid #3ADA94;
+    border-bottom: thin solid #3ADA94;
+    background: #B8FFE0;
+    list-style: none;
+}
+
+ul.messages li.info
+{
+    border-top: thin solid #94DA3A;
+    border-bottom: thin solid #94DA3A;
+    background: #FFE0B8;
+    list-style: none;
+}
+
+/* Pagination */
+div.pagination
+{
     text-align: right;
 }
 

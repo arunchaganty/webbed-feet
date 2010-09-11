@@ -2,7 +2,8 @@
 
 {% block body %}
 <div id="standings">
-  <h2>Match Results {%if bot_id%} For Bot#{{bot_id}} {%endif%}</h2>
+  <h2>Match Results {%if bot %} For Bot '{{bot.name}}' {%endif%}</h2>
+  <p>To replay the match, you can download the log file</p>
   {% if messages %}
   <div id="messages">
   <ul class="messages">
@@ -15,6 +16,24 @@
 
 
 {% if runs %}
+    <table id="results" class="results">
+      <thead>
+        <th>Timestamp</th> <th>Team 1</th> <th>Team 2</th> <th>Status</th> <th>Score</th><th>Log File</th> 
+      </thead>
+    <tbody>
+    {% for run in runs.object_list %}
+    <tr class="{% cycle 'dark' 'light' %}">
+      <td><b>{{run.timestamp}}</b></td>
+      <td>{{run.player1.team}} ({{run.player1.name}})</td>
+      <td>{{run.player2.team}} ({{run.player2.name}})</td>
+      <td>{{run.status}}</td>
+      <td>{{run.score}}</td>
+      <td><a href="{{MEDIA_URL}}{{run.game_data}}">Click Here</a></td>
+    </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+
     <div class="pagination">
         <span class="step-links">
             {% if runs.has_previous %}
@@ -39,22 +58,6 @@
         </span>
     </div>
 
-    <table id="results" class="results">
-      <thead>
-        <th>Timestamp</th> <th>Team 1</th> <th>Team 2</th> <th>Status</th> <th>Score</th><th>Log File</th> 
-      </thead>
-    <tbody>
-    {% for run in runs.object_list %}
-    <tr>
-      <td><b>{{run.timestamp}}</b></td>
-      <td>{{run.player1.team}} ({{run.player1.name}})</td>
-      <td>{{run.player2.team}} ({{run.player2.name}})</td>
-      <td>{{run.status}}</td>
-      <td>{{run.score}}</td>
-      <td><a href="{{MEDIA_URL}}{{run.game_data}}">Click Here</a></td>
-    {% endfor %}
-    </tbody>
-    </table>
 {% else %}
     <b>None</b>
 {% endif %}

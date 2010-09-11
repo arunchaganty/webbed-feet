@@ -3,6 +3,7 @@ from django.conf.urls.defaults import *
 urlpatterns = patterns('web.judge.views',
     (r'^manage/$', 'manage'),
     (r'^standings/$', 'standings'),
+    (r'^standings/(?P<page>[0-9]+)/$', 'standings'),
     # Result pages
     (r'^results/$', 'results'),
     (r'^results/all/$', 'results'),
