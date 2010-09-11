@@ -85,14 +85,7 @@ class SnakeGame(Game):
 
         # The hook takes care of output codes
         output = output.strip()
-        score = cls.scoreHook(output)
-        if output.isdigit():
-            status = "OK"
-        # Else expect an error code
-        elif output in ["DQ1", "DQ2", "TO1", "TO2", "CR1", "CR2", "ERR"]:
-            status = output
-        else:
-            status = "ERR"
+        score1, score2, status = cls.scoreHook(output)
 
         log_path = ""
         try:
@@ -110,23 +103,41 @@ class SnakeGame(Game):
             print e
             log_path = ""
 
-        run = Bot.Run(datetime.now(), player1, player2, score, status, log_path)
+        run = Bot.Run(datetime.now(), player1, player2, score1, score2, status, log_path)
 
         return run
 
     @classmethod
     def scoreHook(cls, output):
         if output.isdigit():
+            status = "OK"
+
             score = int(output)
             # Add a constant offset of 50
             if score < 0:
-                score -= 50
+                score1 = 0
+                score2 = -score + 50
+            elif score == 0:
+                score1 = 25
+                score2 = 25
             elif score > 0:
-                score += 50
-            return score
-        else:
-            # Handle various error codes
-            return 0
+                score1 = score + 50
+                score2 = 0
+        # Else expect an error code
+        elif output in ["DQ1", "TO1"]:
+            status = output
+            score1 = 0
+            score2 = 25
+        elif output in ["DQ2", "TO2"]:
+            status = output
+            score1 = 25
+            score2 = 0
+        else: # output in ["CR1", "CR2", "ERR"]:
+            status = output
+            score1 = 0
+            score2 = 0
+
+        return score1, score2, status
 
 class OthelloGame(Game):
     GAME_CWD = "/home/teju/Projects/Desdemona/"
@@ -156,14 +167,7 @@ class OthelloGame(Game):
 
         # The hook takes care of output codes
         output = output.strip()
-        score = cls.scoreHook(output)
-        if output.isdigit():
-            status = "OK"
-        # Else expect an error code
-        elif output in ["DQ1", "DQ2", "TO1", "TO2", "CR1", "CR2", "ERR"]:
-            status = output
-        else:
-            status = "ERR"
+        score1, score2, status = cls.scoreHook(output)
 
         log_path = ""
         try:
@@ -181,20 +185,41 @@ class OthelloGame(Game):
             print e
             log_path = ""
 
-        run = Bot.Run(datetime.now(), player1, player2, score, status, log_path)
+        run = Bot.Run(datetime.now(), player1, player2, score1, score2, status, log_path)
 
         return run
 
     @classmethod
     def scoreHook(cls, output):
         if output.isdigit():
+            status = "OK"
+
             score = int(output)
             # Add a constant offset of 50
             if score < 0:
-                score -= 50
+                score1 = 0
+                score2 = -score + 50
+            elif score == 0:
+                score1 = 25
+                score2 = 25
             elif score > 0:
-                score += 50
-            return score
-        else:
-            # Handle various error codes
-            return 0
+                score1 = score + 50
+                score2 = 0
+        # Else expect an error code
+        elif output in ["DQ1", "TO1"]:
+            status = output
+            score1 = 0
+            score2 = 25
+        elif output in ["DQ2", "TO2"]:
+            status = output
+            score1 = 25
+            score2 = 0
+        else:    # output in ["CR1", "CR2", "ERR"]:
+            if output not in ["CR1", "CR2", "ERR"]:
+                output = "ERR"
+            status = output
+            score1 = 0
+            score2 = 0
+
+        return score1, score2, status
+

@@ -28,7 +28,6 @@ def handleError(self, code, player1, player2):
     else:
         raise StandardError(code)
 
-
 class Task():
     taskManager = None
     def __init__(self, *args):

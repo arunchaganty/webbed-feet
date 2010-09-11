@@ -7,11 +7,11 @@ reporter: Arun Tejasvi Chaganty <arunchaganty@gmail.com>
 severity: minor
 
 
-status: fixed
+status: open
 
 
-summary: Make webbing handle plays from different games
+summary: Handle tarball uploads
 
 
-time: Sat, 11 Sep 2010 01:39:58 +0000
+time: Sat, 11 Sep 2010 20:18:12 +0000
 

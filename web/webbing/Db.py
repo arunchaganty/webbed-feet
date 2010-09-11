@@ -108,28 +108,35 @@ class GameTable:
         queries = []
 
         # Insert run
-        value_str = "(NULL, '%s', %d, %d, %d, '%s', '%s')"%(run.timestamp, run.player1.id, 
-                run.player2.id, run.score, run.status, run.game_data)
+        value_str = "(NULL, '%s', %d, %d, %d, %d, '%s', '%s')"%(run.timestamp, run.player1.id, 
+                run.player2.id, run.score1, run.score2, run.status, run.game_data)
         query = "INSERT INTO %s VALUES %s"%(self.tables["run"], value_str)
         queries.append(query)
 
         # Update scores
-        score = run.score
-
-        if score > 0:
+        if run.score1 > 0:
             player1, player2 = run.player1, run.player2
+            score1, score2 = run.score1, run.score2
         else:
             player2, player1 = run.player1, run.player2
+            score2, score1 = run.score1, run.score2
 
         count = player1.count + 1
-        score = (score + player1.score * player1.count) / float(count)
+        if run.status not in ["CR1", "CR2", "ERR"]:
+            score = (score1 + player1.score * player1.count) / float(count)
+        else:
+            score = player1.score
 
         query = "UPDATE %s SET `score` = %f, `count` = %d WHERE `id` = %d"%(self.tables["submission"], score, count, player1.id)
         queries.append(query)
 
         if player2 != player1:
             count = player2.count + 1
-            score = (0 + player2.score * player2.count) / float(count)
+
+            if run.status not in ["CR1", "CR2", "ERR"]:
+                score = (score2 + player2.score * player2.count) / float(count)
+            else:
+                score = player2.score
 
             query = "UPDATE %s SET `score` = %f, `count` = %d WHERE `id` = %d"%(self.tables["submission"], score, count, player2.id)
             queries.append(query)

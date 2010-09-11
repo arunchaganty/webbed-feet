@@ -46,7 +46,8 @@ class Run( models.Model ):
     timestamp = models.DateTimeField( auto_now = True )
     player1 = models.ForeignKey( Submission, related_name="player1_runset" )
     player2 = models.ForeignKey( Submission, related_name="player2_runset" )
-    score = models.IntegerField()
+    score1 = models.IntegerField()
+    score2 = models.IntegerField()
     status = models.CharField(max_length=3, choices=STATUS)
     game_data = models.FileField(upload_to='logs')
 

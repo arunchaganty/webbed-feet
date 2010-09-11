@@ -29,12 +29,13 @@ class Bot:
         return self.__db.get_count(self)
 
 class Run:
-    def __init__(self, timestamp, player1, player2, score, status, game_data):
+    def __init__(self, timestamp, player1, player2, score1, score2, status, game_data):
         self.run_id = None
         self.timestamp = timestamp
         self.player1 = player1
         self.player2 = player2
-        self.score = score
+        self.score1 = score1
+        self.score2 = score2
         self.status = status
         self.game_data = game_data
 

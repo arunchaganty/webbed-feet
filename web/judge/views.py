@@ -47,7 +47,7 @@ def manage(request):
             context_instance = RequestContext(request))
 
 def standings(request, page=1, gameName=None):
-    games = models.Game.objects.all()
+    games = models.Game.objects.filter(active=True)
 
 
     if gameName:
@@ -93,11 +93,11 @@ def results(request, bot_id=None, page=1, gameName=None):
     # Game
     bot = None
     game = None
-    games = models.Game.objects.all()
+    games = models.Game.objects.filter(active=True)
 
     if gameName != None:
         try:
-            game = models.Game.objects.get(name=gameName)
+            game = games.get(name=gameName)
             runs = models.Run.objects.filter(player1__game=game)
             runs = runs.order_by('-timestamp')
         except exceptions.ObjectDoesNotExist:
