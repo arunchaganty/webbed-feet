@@ -74,7 +74,7 @@ class SnakeGame(Game):
 
         # Clean up 
         for name in [cls.BOT_INPUT, cls.BOT_HEADER]:
-            path = os.path.join(cls.BUILDNEST, cls.BOT_INPUT)
+            path = os.path.join(cls.BUILDNEST, name)
             if os.path.exists(path):
                 os.remove(path)
 
