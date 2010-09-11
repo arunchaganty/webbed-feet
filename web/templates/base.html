@@ -15,14 +15,14 @@
         </div>
 
         <div id="linkbar">
-            <a href="/home/">Home</a>
+          <a href="{{SITE_URL}}/home/">Home</a>
             {% if team %}
-            &middot; <a href="/judge/manage/">Manage Submissions</a>
+            &middot; <a href="{{SITE_URL}}/judge/manage/">Manage Submissions</a>
             {% endif %}
-            &middot; <a href="/judge/standings/">Standings</a>
-            &middot; <a href="/judge/results/">Match Results</a>
+            &middot; <a href="{{SITE_URL}}/judge/standings/">Standings</a>
+            &middot; <a href="{{SITE_URL}}/judge/results/">Match Results</a>
             {% if team %}
-            &middot; <a href="/home/logout/">Logout</a> 
+            &middot; <a href="{{SITE_URL}}/home/logout/">Logout</a> 
             {% endif %}
         </div>
 

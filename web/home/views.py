@@ -24,7 +24,7 @@ def home(request):
             if request.GET.has_key("next"):
                 return HttpResponseRedirect(request.GET["next"])
             else:
-                return HttpResponseRedirect("/home/")
+                return HttpResponseRedirect("%s/home/"%(settings.SITE_URL,))
     elif request.session.has_key("team"):
         team = request.session["team"]
         bots = j_models.Submission.objects.filter(team=team)
@@ -61,5 +61,5 @@ def login(request):
 def logout(request):
     if request.session.has_key("team"):
         del request.session["team"]
-    return HttpResponseRedirect("/home/")
+    return HttpResponseRedirect("%s/home/"%(settings.SITE_URL,))
 

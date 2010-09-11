@@ -4,5 +4,5 @@ urlpatterns = patterns('web.home.views',
     (r'^logout/$', 'logout'),
     (r'^login/$', 'login'),
     (r'^ping/$', 'ping'),
-    (r'^$', 'home'),
+    (r'', 'home'),
 )

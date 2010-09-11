@@ -15,13 +15,11 @@ from django.db.models import Max
 
 from django.core import exceptions
 
-from web import settings
-
 from web.home.decorators import login_required
+from web import settings
 
 RUNS_PER_PAGE = 25
 TEAMS_PER_PAGE = 25
-
 
 @login_required()
 def manage(request):
@@ -62,7 +60,7 @@ def standings(request, page=1, gameName=None):
             standings = list(teams)
         except exceptions.ObjectDoesNotExist:
             messages.error(request, "No game by that name exists")
-            return HttpResponseRedirect("/judge/standings/all/")
+            return HttpResponseRedirect("%s/judge/standings/all/"%(settings.SITE_URL,))
     else:
         team_score = {}
         for game in games:
@@ -104,7 +102,7 @@ def results(request, bot_id=None, page=1, gameName=None):
             runs = runs.order_by('-timestamp')
         except exceptions.ObjectDoesNotExist:
             messages.error(request, "No game by that name exists")
-            return HttpResponseRedirect("/judge/results/all/")
+            return HttpResponseRedirect("%s/judge/results/all/"%(settings.SITE_URL))
     elif bot_id != None:
         try:
             bot = models.Submission.objects.get(id=bot_id)
@@ -112,7 +110,7 @@ def results(request, bot_id=None, page=1, gameName=None):
             runs = runs.order_by('-timestamp')
         except exceptions.ObjectDoesNotExist:
             messages.error(request, "No bot by that id exists")
-            return HttpResponseRedirect("/judge/results/all/")
+            return HttpResponseRedirect("%s/judge/results/all/"%(settings.SITE_URL))
     else:
         runs = models.Run.objects.order_by('-timestamp')
 
