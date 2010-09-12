@@ -10,3 +10,5 @@ web/media/logs/
 web/media/admin/
 web/desdemona.db
 web/apache/django.wsgi
+buildnests/
+runnests/
