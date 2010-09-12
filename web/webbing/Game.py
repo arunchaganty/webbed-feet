@@ -32,11 +32,11 @@ class Game:
             return 0
 
 class SnakeGame(Game):
-    GAME_CWD = "/home/teju/Projects/automania/prob1/"
-    EXECUTABLE = "/home/teju/Projects/automania/prob1/bin/snake"
+    GAME_CWD = "/home/codingevents/automania/runnests/snake/"
+    EXECUTABLE = "/home/codingevents/automania/runnests/snake/bin/snake"
     POST_RUN_LOG = "game_out.txt"
 
-    BUILDNEST = "/home/teju/Projects/automania/buildnest/bots/"
+    BUILDNEST = "/home/codingevents/automania/buildnest/bots/"
     BOT_INPUT = "bot.cpp"
     BOT_HEADER = "bot.h"
     BOT_OUTPUT = "bot.so"
