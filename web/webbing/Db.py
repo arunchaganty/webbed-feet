@@ -130,7 +130,7 @@ class GameTable:
         query = "UPDATE %s SET `score` = %f, `count` = %d WHERE `id` = %d"%(self.tables["submission"], score, count, player1.id)
         queries.append(query)
 
-        if player2 != player1:
+        if player2.id != player1.id:
             count = player2.count + 1
 
             if run.status not in ["CR1", "CR2", "ERR"]:

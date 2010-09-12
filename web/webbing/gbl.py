@@ -2,6 +2,6 @@
 
 # Daemon Properties
 MAINLOOP_PERIOD = 5 # seconds
-PING_URL = "http://localhost/automania/home/ping/"
-BASE_LOCATION="/home/teju/Projects/webbed-feet/web/media/"
+PING_URL = "http://shaastra.iitm.ac.in/automania/home/ping/"
+BASE_LOCATION="/home/codingevents/automania/web/media/"
 
