@@ -10,3 +10,6 @@ web/media/logs/
 web/media/admin/
 web/desdemona.db
 web/apache/django.wsgi
+web/webbing/gbl.py
+buildnests/
+runnests/

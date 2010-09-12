@@ -1,7 +1,7 @@
 # Scheduler for matches 
 
 #import settings
-import urllib
+import urllib2
 import sys
 import time
 
@@ -11,19 +11,17 @@ from TaskManager import TaskManager
 import Scheduler
 import Db
 
-_opener = urllib.URLopener(proxies={})
-
 def server_alive():
    # Periodically ping the webbed-feet server to check if it is alive. 
    url = gbl.PING_URL
 
    try :
-       f = _opener.open(url)
-       if f.getcode() != 200:
+       f = urllib2.urlopen(url)
+       if f.code != 200:
            raise Exception("Can not ping server")
        else:
            print "Server still alive..."
-   except StandardError as e:
+   except StandardError, e:
        print "Server error: ", str(e)
        return False
 
@@ -31,8 +29,8 @@ def server_alive():
 
 def main():
     # Add to a work queue. 
-    db =  Db.MySQLDb("localhost", "root", "teju", "judge")
-    tbl = Db.WebbedFeetTable(db, game="judge_game", submission="judge_submission", run="judge_run")
+    db =  Db.MySQLDb(gbl.DB_HOST, gbl.DB_USER, gbl.DB_PASS, gbl.DB_NAME)
+    tbl = Db.WebbedFeetTable(db, game=gbl.TBL_GAME, submission=TBL_SUBMISSION, run=gbl.TBL_RUN)
 
     schedulers = [Scheduler.MinRunScheduler(game) for game in tbl.getGames()]
     manager = TaskManager(db)
