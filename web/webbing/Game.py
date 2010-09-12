@@ -46,6 +46,7 @@ class SnakeGame(Game):
         """Expect a tarball containing bot.cpp (and bot.h).
         Compile the submission"""
 
+        old_mask = os.umask(0)
         # Read as a zipfile
         # Read the uploaded file
         try:
@@ -88,6 +89,7 @@ class SnakeGame(Game):
                 os.remove(path)
 
         # TODO: Check compiled .so?
+        os.umask(old_mask)
 
         data = botSo.read()
         uploaded_file.truncate(0)
