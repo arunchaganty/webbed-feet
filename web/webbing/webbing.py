@@ -29,8 +29,8 @@ def server_alive():
 
 def main():
     # Add to a work queue. 
-    db =  Db.MySQLDb("localhost", "automania", "4ut0mani4", "automania")
-    tbl = Db.WebbedFeetTable(db, game="judge_game", submission="judge_submission", run="judge_run")
+    db =  Db.MySQLDb(gbl.DB_HOST, gbl.DB_USER, gbl.DB_PASS, gbl.DB_NAME)
+    tbl = Db.WebbedFeetTable(db, game=gbl.TBL_GAME, submission=TBL_SUBMISSION, run=gbl.TBL_RUN)
 
     schedulers = [Scheduler.MinRunScheduler(game) for game in tbl.getGames()]
     manager = TaskManager(db)
