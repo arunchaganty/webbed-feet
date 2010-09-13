@@ -55,7 +55,7 @@ def standings(request, page=1, gameName=None):
             game = games.get(name=gameName)
             # Get the best bot for every team
             submissions = models.Submission.objects.filter(game = game)
-            teams = submissions.values("team__name").annotate(score=Max('score')).order_by('-score')
+            teams = submissions.values("team__name").annotate(score=Max('score')).order_by('-score').values("name", "team__name", "score")
 
             standings = list(teams)
         except exceptions.ObjectDoesNotExist:
@@ -83,6 +83,7 @@ def standings(request, page=1, gameName=None):
         displayed_teams = paginator.page(paginator.num_pages)
 
     return render_to_response("standings.html", {
+        'gameName':gameName,
         'standings':displayed_teams,
         'games':games,
         
