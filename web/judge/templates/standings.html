@@ -2,7 +2,7 @@
 
 {% block body %}
 <div id="standings">
-<h2>Standings</h2>
+  <h2>Standings For {% if gameName %} {{gameName}} {%else%} All Games {%endif%}</h2>
   {% if messages %}
   <div id="messages">
   <ul class="messages">
@@ -19,6 +19,9 @@
     {% endfor %}
     <a href="{{SITE_URL}}/judge/standings/all/">All</a>
   </p>
+  <p>
+    Standings are calculated based on the performance of the best bot in a team. Click on a particular game to find which bot this is.
+  </p>
 
 {% if standings %}
     <table id="scores" class="results">
@@ -29,7 +32,7 @@
     {% for team in standings.object_list %}
     <tr class="{% cycle 'dark' 'light' %}">
       <td><b>{{forloop.counter}}</b></td>
-      <td>{{team.team__name}}</td>
+      <td>{{team.team__name}} {% if gameName %} ({{team.name}}) {% endif %}</td>
       <td>{{team.score}}</td>
     {% endfor %}
     </tbody>
