@@ -39,7 +39,8 @@
         <th>Team 1 (Bot Name)</th> 
         <th>Team 2 (Bot Name)</th> 
         <th>Status</th> 
-        <th>Score</th>
+        <th>Player 1 Score</th>
+        <th>Player 2 Score</th>
         <th>Log File</th> 
       </thead>
     <tbody>
@@ -49,8 +50,9 @@
       <td>{{run.player1.team}} ({{run.player1.name}})</td>
       <td>{{run.player2.team}} ({{run.player2.name}})</td>
       <td>{{run.get_status_display}}</td>
-      <td>{{run.score}}</td>
-      <td><a href="{{MEDIA_URL}}{{run.game_data}}">Click Here</a></td>
+      <td>{{run.score1}}</td>
+      <td>{{run.score2}}</td>
+      <td><a href="{{MEDIA_URL}}/{{run.game_data}}">Click Here</a></td>
     </tr>
     {% endfor %}
     </tbody>

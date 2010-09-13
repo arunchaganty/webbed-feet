@@ -39,7 +39,7 @@ class LoginForm( forms.ModelForm ):
 
     def clean_password(self):
         passwd = self.cleaned_data["password"]
-        passwd = hashlib.sha1(passwd).hexdigest()
+        passwd = hashlib.md5(passwd).hexdigest()
 
         return passwd
 
