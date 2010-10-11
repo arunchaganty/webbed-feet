@@ -3,7 +3,7 @@
 class Bot:
     """Wrapper about a bot's db instance"""
 
-    def __init__(self, db, id, game_id, team_id, timestamp, sha1sum, name, data, comments, active, count, score):
+    def __init__(self, db, id, game_id, team_id, timestamp, sha1sum, name, data, comments, active, failures, count, score):
         self.id = id
         self.game_id = game_id
         self.team_id = team_id
@@ -13,6 +13,7 @@ class Bot:
         self.data = data
         self.comments = comments
         self.active = active
+        self.failures = failures
         self.count = count
         self.score = score
 

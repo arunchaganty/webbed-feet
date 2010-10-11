@@ -43,6 +43,9 @@ class Submission( models.Model ):
 
     active = models.BooleanField()
 
+    # Fail Count to prevent failed bots from running continuously
+    failures = models.IntegerField(default=0)
+
     # Score stored here for efficent reads
     count = models.IntegerField(default=0)
     score = models.FloatField(default=0)

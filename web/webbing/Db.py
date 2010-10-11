@@ -4,6 +4,7 @@
 import sqlite3
 import MySQLdb
 
+import gbl
 import Games
 from Bot import Bot
 
@@ -122,20 +123,38 @@ class GameTable:
             score2, score1 = run.score1, run.score2
 
         count = player1.count + 1
-        if run.status not in ["CR1", "CR2", "ERR"]:  
+        if run.status in ["OK"]:  
             score = (score1 + player1.score * player1.count) / float(count)
+            player1.failures = 0
+            player1.active = 1
+        elif run.status in ["DQ2", "TO2", "CR2"]:  
+            score = (score1 + player1.score * player1.count) / float(count)
+        elif run.status in ["DQ1", "TO1", "CR1"]:  
+            score = player1.score
+            player1.failures += 1
+            if player1.failures == gbl.FAIL_CHANCES:
+                player1.active = 0
         else:
             score = player1.score
-        query = "UPDATE %s SET `score` = %f, `count` = %d WHERE `id` = %d"%(self.tables["submission"], score, count, player1.id)
+        query = "UPDATE %s SET `score` = %f, `count` = %d, `failures` = %d, `active` = %d WHERE `id` = %d"%(self.tables["submission"], score, count, player1.failures, player1.active, player1.id)
         queries.append(query)
 
         count = player2.count + 1
-        if run.status not in ["CR1", "CR2", "ERR"]:
+        if run.status in ["OK"]:  
             score = (score2 + player2.score * player2.count) / float(count)
+            player2.failures = 0
+            player2.active = 1
+        elif run.status in ["DQ1", "TO1", "CR1"]:  
+            score = (score2 + player2.score * player2.count) / float(count)
+        elif run.status in ["DQ2", "TO2", "CR2"]:  
+            score = player2.score
+            player2.failures += 1
+            if player2.failures == gbl.FAIL_CHANCES:
+                player2.active = 0
         else:
             score = player2.score
+        query = "UPDATE %s SET `score` = %f, `count` = %d, `failures` = %d, `active` = %d WHERE `id` = %d"%(self.tables["submission"], score, count, player2.failures, player2.active, player2.id)
 
-        query = "UPDATE %s SET `score` = %f, `count` = %d WHERE `id` = %d"%(self.tables["submission"], score, count, player2.id)
         queries.append(query)
 
         return queries

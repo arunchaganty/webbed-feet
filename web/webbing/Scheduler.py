@@ -16,6 +16,7 @@ class MinRunScheduler(Scheduler):
         while True:
             # Only two players
             candidates = self.game.listBots()
+            print candidates
             print "# of candidates: %d"%(len(candidates))
             # If no candidates, just return a 'waste-time' task
             if len(candidates) == 0:
@@ -25,6 +26,7 @@ class MinRunScheduler(Scheduler):
             candidates = [ c for c in candidates if c.team_id != player1.team_id ]
             if len(candidates) == 0: 
                 yield Task.Task()
+                continue
             else:
                 players = [player1, random.choice(candidates)]
 
