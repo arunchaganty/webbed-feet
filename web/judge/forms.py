@@ -39,7 +39,15 @@ class SubmissionForm( forms.ModelForm ):
 
     def clean_sha1sum(self):
         data = self.cleaned_data["data"]
-        self.cleaned_data["sha1sum"] = hashlib.sha1(data.read()).hexdigest()
+        data.open('rb')
+        hsh = hashlib.sha1()
+        while True:
+            bits = data.read(128)
+            if not bits:
+                break
+            hsh.update(bits)
+        self.cleaned_data["sha1sum"] = hsh.hexdigest()
+        data.close()
 
     def clean_data(self):
         game = self.cleaned_data["game"]
@@ -48,7 +56,7 @@ class SubmissionForm( forms.ModelForm ):
         try:
             cls = getattr(Game, game.classname)
         except AttributeError:
-            raise forms.ValidationError("Error loading game. Please contact event coordinators")
+            raise forms.ValidationError("Error in judge. Please contact event coordinators")
 
         data = self.cleaned_data["data"]
 

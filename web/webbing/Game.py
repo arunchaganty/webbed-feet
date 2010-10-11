@@ -67,7 +67,7 @@ class SnakeGame(Game):
             f_ = open(os.path.join(cls.BUILDNEST, cls.BOT_INPUT), "w")
             f_.write(f.read(cls.BOT_INPUT))
             if cls.BOT_HEADER in f.namelist():
-                f_ = open(os.path.join(cls.BUILDNEST, cls.BOT_HEADER), "w")
+                f_ = open(os.path.join(cls.BUILDNEST, cls.BOT_HEADER), "wb")
                 f_.write(f.read(cls.BOT_HEADER))
         
         # make in the buildnest
@@ -77,11 +77,11 @@ class SnakeGame(Game):
         
         # Report errors
         if ret != 0:
-	    os.umask(old_mask)
+            os.umask(old_mask)
             raise errors.BuildError(output)
 
         # Save the output    
-        botSo = open(os.path.join(cls.BUILDNEST, cls.BOT_OUTPUT), "r")
+        botSo = open(os.path.join(cls.BUILDNEST, cls.BOT_OUTPUT), "rb")
 
         # Clean up 
         for name in [cls.BOT_INPUT, cls.BOT_HEADER]:
@@ -92,10 +92,21 @@ class SnakeGame(Game):
         # TODO: Check compiled .so?
         os.umask(old_mask)
 
-        data = botSo.read()
+        def read_in_chunks(file_object, chunk_size=1024):
+            """Lazy function (generator) to read a file piece by piece.
+            Default chunk size: 1k."""
+            while True:
+               data = file_object.read(chunk_size)
+               if not data:
+                   break
+               yield data
+
         uploaded_file.truncate(0)
-        uploaded_file.write(data)
+        for piece in read_in_chunks(botSo):
+            uploaded_file.write(piece)
+        uploaded_file.size = os.stat(os.path.join(cls.BUILDNEST, cls.BOT_OUTPUT)).st_size
         uploaded_file.close()
+        botSo.close()
         
         return uploaded_file
 
@@ -121,7 +132,7 @@ class SnakeGame(Game):
             if cls.POST_RUN_LOG:
                 log_in = os.path.join(cls.GAME_CWD, cls.POST_RUN_LOG)
 
-                sha1sum = hashlib.sha1(open(log_in).read()).hexdigest()
+                sha1sum = hashlib.sha1(open(log_in, 'rb').read()).hexdigest()
 
                 log_path = os.path.join("logs",sha1sum)
                 log_out = os.path.join(gbl.BASE_LOCATION, log_path)
@@ -137,31 +148,31 @@ class SnakeGame(Game):
 
     @classmethod
     def scoreHook(cls, output):
-        print output
+        print "Output in hook - <"+output+">"
         try:
             status = "OK"
             score = int(output)
             print score
-            # Add a constant offset of 50
+            # 
             if score < 0:
-                score1 = 0
+                score1 = score
                 score2 = -score
             elif score == 0:
                 score1 = 0
                 score2 = 0
             elif score > 0:
                 score1 = score
-                score2 = 0
+                score2 = -score
         except:
             # Else expect an error code
             if output in ["DQ1", "TO1"]:
                 status = output
-                score1 = 0
-                score2 = 25
+                score1 = -50
+                score2 = 50
             elif output in ["DQ2", "TO2"]:
                 status = output
-                score1 = 25
-                score2 = 0
+                score1 = 50
+                score2 = -50
             else: # output in ["CR1", "CR2", "ERR"]:
                 if output not in ["CR1", "CR2", "ERR"]:
                     output = "ERR"

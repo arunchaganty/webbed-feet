@@ -19,7 +19,7 @@ from web.home.decorators import login_required
 from web import settings
 
 RUNS_PER_PAGE = 25
-TEAMS_PER_PAGE = 25
+TEAMS_PER_PAGE = 50
 
 @login_required()
 def manage(request):
@@ -30,7 +30,7 @@ def manage(request):
         form = forms.SubmissionForm(data=data, files=file_data, instance=sub)
         if form.is_valid():
             form.save()
-            # Set the first 5 bots 'active', and make all the rest inactive
+            # Set the first MAX_ACTIVE_BOTS bots 'active', and make all the rest inactive
             bots = models.Submission.objects.filter(team = request.session["team"], active=True).order_by('-timestamp')
             if len(bots) > settings.MAX_ACTIVE_BOTS:
                 for bot in bots[settings.MAX_ACTIVE_BOTS:]: 
@@ -55,7 +55,7 @@ def standings(request, page=1, gameName=None):
             game = games.get(name=gameName)
             # Get the best bot for every team
             submissions = models.Submission.objects.filter(game = game)
-            teams = submissions.values("team__name").annotate(score=Max('score')).order_by('-score').values("name", "team__name", "score")
+            teams = submissions.filter(active=True).values("team__name").annotate(score=Max('score')).order_by('-score').values("name", "team__name", "score")
 
             standings = list(teams)
         except exceptions.ObjectDoesNotExist:
@@ -66,7 +66,7 @@ def standings(request, page=1, gameName=None):
         for game in games:
             # Get the best bot for every team
             submissions = models.Submission.objects.filter(game=game)
-            teams = submissions.values("team__name").annotate(score=Max('score'))
+            teams = submissions.filter(active=True).values("team__name").annotate(score=Max('score'))
             for team in teams:
                 if not team_score.has_key(team["team__name"]):
                     team_score[team["team__name"]] = 0

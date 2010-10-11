@@ -10,7 +10,7 @@ STATUS = (
     ('TO2', 'Player 2 Timed Out'),
     ('CR1', 'Player 1 Crashed'),
     ('CR2', 'Player 2 Crashed'),
-    ('ERR', 'Unknown Error'),
+    ('ERR', 'Runtime Error'),
     )
 
 class GameError(StandardError):

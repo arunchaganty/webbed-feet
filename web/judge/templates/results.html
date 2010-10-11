@@ -61,8 +61,8 @@
     <div class="pagination">
         <span class="step-links">
             {% if runs.has_previous %}
-                {% if bot_id %}
-                <a href="{{SITE_URL}}/judge/results/bot/{{bot_id}}/{{ runs.previous_page_number }}/">previous</a>
+                {% if bot.id %}
+                <a href="{{SITE_URL}}/judge/results/bot/{{bot.id}}/{{ runs.previous_page_number }}/">previous</a>
                 {% else %}
                 <a href="{{SITE_URL}}/judge/results/all/{{ runs.previous_page_number }}/">previous</a>
                 {% endif %}
@@ -73,8 +73,8 @@
             </span>
 
             {% if runs.has_next %}
-                {% if bot_id %}
-                <a href="{{SITE_URL}}/judge/results/bot/{{bot_id}}/{{ runs.next_page_number }}/">next</a>
+                {% if bot.id %}
+                <a href="{{SITE_URL}}/judge/results/bot/{{bot.id}}/{{ runs.next_page_number }}/">next</a>
                 {% else %}
                 <a href="{{SITE_URL}}/judge/results/all/{{ runs.next_page_number }}/">next</a>
                 {% endif %}
