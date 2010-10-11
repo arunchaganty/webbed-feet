@@ -2,7 +2,7 @@ from django.db import models
 
 import operator
 
-from web.registration import models as r_models
+from web.home.models import User
 from web.webbing import errors
 
 class Game( models.Model ):
@@ -16,7 +16,7 @@ class Game( models.Model ):
 
 class Submission( models.Model ):
     game = models.ForeignKey( Game )
-    team = models.ForeignKey( r_models.Team )
+    user = models.ForeignKey( User )
 
     timestamp = models.DateTimeField( auto_now = True )
     sha1sum = models.CharField( max_length=100 )

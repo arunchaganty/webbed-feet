@@ -5,30 +5,31 @@
         <title>Webbed Feet</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <link rel="stylesheet" href="{{MEDIA_URL}}/css/style.css" type="text/css" ></link>
-        <link rel="top" title="NewsLine" href="{{SITE_URL}}" />
+        <link rel="top" title="Webbed-Feet" href="{{SITE_URL}}" />
         <link rel="icon" href="{{MEDIA_URL}}/images/favicon.ico" type="image/x-icon" />
     </head>
     <body>
         <div id="header">
             <img src="{{MEDIA_URL}}/images/logo.jpg" />
-            <!-- <h1>Desdemona Online</h1> -->
         </div>
 	
 
         <div id="linkbar">
           <a href="{{SITE_URL}}/home/">Home</a>
-            {% if team %}
+            {% if not user.is_authenticated %}
+            &middot; <a href="{{SITE_URL}}/accounts/register/">Register</a>
+            {% endif %}
+
+            {% if user.is_authenticated %}
             &middot; <a href="{{SITE_URL}}/judge/manage/">Manage Submissions</a>
             {% endif %}
+
             &middot; <a href="{{SITE_URL}}/judge/standings/">Standings</a>
             &middot; <a href="{{SITE_URL}}/judge/results/">Match Results</a>
-            {% if team %}
-            &middot; <a href="{{SITE_URL}}/home/logout/">Logout</a> 
-            {% endif %}
-        </div>
 
-	<div class="error">
-        <p> <b> The final round of judging is now over. The final ranklist is displayed on the Standings page. We thank all the participants for putting up such a fine show. Special thanks to Arun Chaganty for developing the online judge.</b> </p>
+            {% if user.is_authenticated %}
+            &middot; <a href="{{SITE_URL}}/logout/">Logout</a> 
+            {% endif %}
         </div>
 
         <div id="body">

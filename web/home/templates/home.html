@@ -6,33 +6,15 @@
     <tr>
       <td>
         <p id="description">
-        <b>Webbed Feet</b> is a <i>competition judge</i> created to evaluate AI bots created for the <a href="http://www.cse.iitm.ac.in/~cs638/">"Artificial Intelligence"</a> course taken by <a href="http://aidblab.cse.iitm.ac.in/khemani/">Dr. Deepak Khemani</a>. It is also being used as the judge for <a href="http://www.shaastra.org/2010/main/events/coding/automania">Automania</a> at Shaastra 2010. You can obtain the source code <a href="http://github.com/arunchaganty/webbed-feet">here</a>.
+        <b>Webbed Feet</b> is a <i>competition judge</i> created to evaluate AI bots created for the <a href="http://www.cse.iitm.ac.in/~cs638/">"Artificial Intelligence"</a> course taken by <a href="http://aidblab.cse.iitm.ac.in/khemani/">Dr. Deepak Khemani</a>. It was also used as the judge for <a href="http://www.shaastra.org/2010/main/events/coding/automania">Automania</a> at Shaastra 2010. You can obtain the source code <a href="http://github.com/arunchaganty/webbed-feet">here</a>.
         </p>
-        <div class="error">
-        <p>Prize details are : <br>
-First prize : 8,000 INR<br>
-Second prize : 5,500 INR<br>
-Third prize : 3,500 INR<br>
-Fourth prize : 2,000 INR<br>
-Fifth prize : 1,000 INR<br><br>
 
-Bots disqualified (Finals) : <br> rippers (mahamakhau..) <br> eclipse (v)
- </p>
-        </div>
-
-        {% if not team %}
-        <p>
-        To participate, please register on the <a href="http://www.shaastra.org/userportal/">Userportal</a> first, and then login using the form to your right. You will then be able to upload your bot(s), and view the results as they are played against other bots.
-        </p>
-        {% endif %}
-
-        </p>
       </td>
       <td>
         <!-- Login -->
-        {% if not team %}
+        {% if not user.is_authenticated %}
         <div id="login" class="calm-blue">
-          <form method="post" action="">
+          <form method="post" action="{{SITE_URL}}/accounts/login/">
             {% csrf_token %}
             <h3>Login</h3>
             <table id="login_form">
@@ -40,6 +22,7 @@ Bots disqualified (Finals) : <br> rippers (mahamakhau..) <br> eclipse (v)
             </table>
             <br />
             <div class="right">
+              <a href="{{SITE_URL}}/accounts/forgot/">Forgot Password?</a>
               <input type="submit" value="Login" />
             </div>
           </form>

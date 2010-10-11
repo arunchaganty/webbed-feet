@@ -78,6 +78,14 @@ span.right {
   background-color: #BDE5F8;
 }
 
+div.calm-blue
+{
+  width: 300px;
+  margin: auto;
+  padding: 10px;
+  min-height: 300px;
+}
+
 .calm-blue2 {
   border-top: solid thin #00529B;
   border-bottom: solid thin #00529B;
@@ -107,24 +115,11 @@ table#home-table td {
   width: 50%;
 }
 
-
-div#login {
-  width: 300px;
-  margin: auto;
-  padding: 10px;
-  height: 300px;
-}
-
-div#quicklinks {
-  width: 300px;
-  margin: auto;
-  padding: 10px;
-  height: 300px;
-}
-
 table.results td,th {
   min-width: 80px;
   text-align: right;
+  padding-left: 5px;
+  padding-right: 5px;
 }
 
 tr.light {
@@ -184,4 +179,4 @@ div.pagination
   text-align: right;
 }
 
-
+/* Password */

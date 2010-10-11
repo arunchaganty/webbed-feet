@@ -3,39 +3,37 @@
 from django.shortcuts import render_to_response 
 from django.template.context import RequestContext
 from django.http import HttpResponse, HttpResponseRedirect
+
+from django.contrib import messages
+from django.contrib import auth
+import django.contrib.auth.forms as auth_forms
+import django.contrib.auth.views as auth_views
+
 import forms
-import web.registration.models as r_models
-import web.events.models as e_models
+import models
 import web.judge.models as j_models
 
 from django.db.models import Max
 
-from decorators import login_required
-
 from web import settings
 
 def home(request):
-    if request.POST:
-        data = request.POST
-        form = forms.LoginForm(data=data)
-        if form.is_valid():
-            # Check if team exists and is registered for the event
-            request.session["team"] = form.instance
-            if request.GET.has_key("next"):
-                return HttpResponseRedirect(request.GET["next"])
-            else:
-                return HttpResponseRedirect("%s/home/"%(settings.SITE_URL,))
-    elif request.session.has_key("team"):
-        team = request.session["team"]
-        bots = j_models.Submission.objects.filter(team=team)
+    if not request.user.is_authenticated():
+        form = auth_forms.AuthenticationForm()
+        
+        return render_to_response("home.html", 
+                {'form':form,},
+                context_instance = RequestContext(request))
+    else:
+        user = request.user
+        bots = j_models.Submission.objects.filter(user=user)
         botCount = bots.count()
 
-        event = e_models.TeamEvent.objects.get(name=settings.EVENT_NAME)
-        teams = event.teams.all()
-        teams = teams.annotate(score = Max('submission__score'))
-        standings = list(teams)
+        users = models.User.objects.all()
+        users = users.annotate(score = Max('submission__score'))
+        standings = list(users)
         standings.sort(key = lambda t: t.score, reverse=True)
-        standing = standings.index(team)
+        standing = standings.index(user)
         score = standings[standing].score
 
         return render_to_response("home.html", {
@@ -44,22 +42,53 @@ def home(request):
             'score':score,
             },
             context_instance = RequestContext(request))
-    else: 
-        form = forms.LoginForm(None)
-        
-    return render_to_response("home.html", 
-            {'form':form,},
-            context_instance = RequestContext(request))
 
 def ping(request):
     return HttpResponse("")
 
 def login(request):
-    return home(request)
+    if request.POST:
+        data = request.POST
+        form = auth_forms.AuthenticationForm(data=data)
+        if form.is_valid():
+            user = form.get_user()
+            if user is not None:
+                if user.is_active:
+                    auth.login( request, user )
+                    messages.info(request, "Login successful")
 
-@login_required()
-def logout(request):
-    if request.session.has_key("team"):
-        del request.session["team"]
+                    if request.GET.has_key("next"):
+                        return HttpResponseRedirect(request.GET["next"])
+                else:
+                    messages.error(request, "That account has been disabled.")
+        else:
+            messages.error(request, "Username or password incorrect")
+
     return HttpResponseRedirect("%s/home/"%(settings.SITE_URL,))
+
+def logout(request):
+    return auth_views.logout(request, "/home/")
+
+def change_password(request):
+    return auth_views.password_change(request, post_change_redirect="/home/")
+
+def forgot_password(request):
+    return auth_views.password_reset(request, post_reset_redirect="/home/")
+
+def register(request):
+    if request.POST:
+        data = request.POST
+        form = forms.UserCreationForm(data = data)
+
+        if form.is_valid():
+            form.save()
+            messages.info(request, "Registration Successful")
+            return HttpResponseRedirect("%s/home/"%(settings.SITE_URL,))
+    else:
+        form = forms.UserCreationForm()
+
+    return render_to_response("register.html", 
+            {'form':form},
+            context_instance = RequestContext(request))
+
 
