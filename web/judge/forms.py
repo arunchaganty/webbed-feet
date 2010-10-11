@@ -2,7 +2,7 @@ from django import forms
 from django.db import models as d_models
 
 from web.webbing import errors
-from web.webbing import Game
+from web.webbing.Games import Game
 
 import settings
 import models
@@ -10,6 +10,8 @@ import models
 import hashlib
 
 class SubmissionForm( forms.ModelForm ):
+    """Used to submit a bot"""
+
     data = forms.FileField(label="Bot Code")
     class Meta:
         model = models.Submission
@@ -32,7 +34,7 @@ class SubmissionForm( forms.ModelForm ):
     def clean_name(self):
         name = self.cleaned_data["name"]
 
-        if len(models.Submission.objects.filter(team=self.instance.team, name=name)) > 0:
+        if len(models.Submission.objects.filter(user=self.instance.user, name=name)) > 0:
             raise forms.ValidationError("You already have a bot by this name")
         
         return name
@@ -54,7 +56,7 @@ class SubmissionForm( forms.ModelForm ):
 
         # Get the game class
         try:
-            cls = getattr(Game, game.classname)
+            cls = game.cls
         except AttributeError:
             raise forms.ValidationError("Error in judge. Please contact event coordinators")
 

@@ -1,5 +1,7 @@
 # Abstraction of a game and all it's aspects
 
+import Game
+
 import os
 import shutil
 import hashlib
@@ -12,26 +14,7 @@ import gbl
 
 import zipfile
 
-class Game:
-    @classmethod
-    def submissionHook(cls, uploaded_file):
-        return uploaded_file
-
-    @classmethod
-    def runHook(cls, player1, player2):
-        return 0
-
-    @classmethod
-    def scoreHook(cls, output):
-        if score.isdigit():
-            score = int(score)
-            # Make any modifications
-            return score
-        else:
-            # Handle various error codes
-            return 0
-
-class SnakeGame(Game):
+class Snake(Game):
     GAME_CWD = "/home/codingevents/automania/runnests/snake/"
     EXECUTABLE = "/home/codingevents/automania/runnests/snake/bin/snake"
     POST_RUN_LOG = "game_out.txt"
@@ -148,7 +131,6 @@ class SnakeGame(Game):
 
     @classmethod
     def scoreHook(cls, output):
-        print "Output in hook - <"+output+">"
         try:
             status = "OK"
             score = int(output)

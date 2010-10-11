@@ -4,8 +4,7 @@
 import sqlite3
 import MySQLdb
 
-
-import Game
+import Games
 from Bot import Bot
 
 class Db:
@@ -56,19 +55,20 @@ class WebbedFeetTable:
         return [ GameTable(self, *g) for g in cursor ]
 
 class GameTable:
-    def __init__(self, webbedFeetTable, game_id, name, cls, active, weight):
+    def __init__(self, webbedFeetTable, game_id, name, classname, active, weight):
         self.db = webbedFeetTable.db
         self.tables = webbedFeetTable.tables
 
         # Game properties
         self.game_id = game_id
         self.name = name
-        self.cls = cls
+        self.classname = classname
         self.active = active
         self.weight = weight
 
     def getClass(self):
-        cls = getattr(Game, self.cls)
+        mod = __import__(self.classname, fromlist=[Games])
+        cls = getattr(mod, self.classname)
         cls.db = self
         return cls
 

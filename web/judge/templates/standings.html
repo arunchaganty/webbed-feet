@@ -29,11 +29,11 @@
         <th>Position</th> <th>Team</th> <th>Score</th>
       </thead>
     <tbody>
-    {% for team in standings.object_list %}
+    {% for user in standings.object_list %}
     <tr class="{% cycle 'dark' 'light' %}">
       <td><b>{{forloop.counter}}</b></td>
-      <td>{{team.team__name}} {% if gameName %} ({{team.name}}) {% endif %}</td>
-      <td>{{team.score}}</td>
+      <td>{{user.username}} {% if gameName %} ({{user.name}}) {% endif %}</td>
+      <td>{{user.score}}</td>
     {% endfor %}
     </tbody>
     </table>

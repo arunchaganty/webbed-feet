@@ -9,29 +9,29 @@ from django.core.paginator import Paginator, InvalidPage, EmptyPage
 
 import forms
 import models
-import web.registration.models as r_models
-import web.events.models as e_models
 from django.db.models import Max
 
 from django.core import exceptions
 
-from web.home.decorators import login_required
+from django.contrib.auth.decorators import login_required
 from web import settings
 
 RUNS_PER_PAGE = 25
-TEAMS_PER_PAGE = 50
+USERS_PER_PAGE = 50
 
 @login_required()
 def manage(request):
+    """ Handles uploading of bots """
+
     if request.POST:
         data = request.POST
         file_data = request.FILES
-        sub = models.Submission(team = request.session["team"])
+        sub = models.Submission(user = request.user)
         form = forms.SubmissionForm(data=data, files=file_data, instance=sub)
         if form.is_valid():
             form.save()
             # Set the first MAX_ACTIVE_BOTS bots 'active', and make all the rest inactive
-            bots = models.Submission.objects.filter(team = request.session["team"], active=True).order_by('-timestamp')
+            bots = models.Submission.objects.filter(user = request.user, active=True).order_by('-timestamp')
             if len(bots) > settings.MAX_ACTIVE_BOTS:
                 for bot in bots[settings.MAX_ACTIVE_BOTS:]: 
                     bot.active = False
@@ -39,7 +39,7 @@ def manage(request):
     else:
         form = forms.SubmissionForm()
 
-    submissions = models.Submission.objects.filter(team = request.session["team"]).order_by('-timestamp')
+    submissions = models.Submission.objects.filter(user = request.user).order_by('-timestamp')
 
     return render_to_response("manage.html", 
             {'form':form,
@@ -47,44 +47,44 @@ def manage(request):
             context_instance = RequestContext(request))
 
 def standings(request, page=1, gameName=None):
+    """Create a standings listing"""
     games = models.Game.objects.filter(active=True)
-
 
     if gameName:
         try: 
             game = games.get(name=gameName)
-            # Get the best bot for every team
+            # Get the best bot for every user
             submissions = models.Submission.objects.filter(game = game)
-            teams = submissions.filter(active=True).values("team__name").annotate(score=Max('score')).order_by('-score').values("name", "team__name", "score")
+            users = submissions.filter(active=True).values("user__username").annotate(score=Max('score')).order_by('-score').values("name", "user__username", "score")
 
-            standings = list(teams)
+            standings = list(users)
         except exceptions.ObjectDoesNotExist:
             messages.error(request, "No game by that name exists")
             return HttpResponseRedirect("%s/judge/standings/all/"%(settings.SITE_URL,))
     else:
-        team_score = {}
+        user_score = {}
         for game in games:
-            # Get the best bot for every team
+            # Get the best bot for every user
             submissions = models.Submission.objects.filter(game=game)
-            teams = submissions.filter(active=True).values("team__name").annotate(score=Max('score'))
-            for team in teams:
-                if not team_score.has_key(team["team__name"]):
-                    team_score[team["team__name"]] = 0
-                team_score[team["team__name"]] += team["score"] * game.weight
+            users = submissions.filter(active=True).values("user_username").annotate(score=Max('score'))
+            for user in users:
+                if not user_score.has_key(user["user__username"]):
+                    user_score[user["user__username"]] = 0
+                user_score[user["user_username"]] += user["score"] * game.weight
 
-        teams = team_score.items()
-        teams.sort(key=lambda kv: kv[1], reverse=True)
-        standings = [{'team__name':kv[0], 'score':kv[1]} for kv in teams]
+        users = user_score.items()
+        users.sort(key=lambda kv: kv[1], reverse=True)
+        standings = [{'username':kv[0], 'score':kv[1]} for kv in users]
 
-    paginator = Paginator( standings, TEAMS_PER_PAGE )
+    paginator = Paginator( standings, USERS_PER_PAGE )
     try:
-        displayed_teams = paginator.page(page)
+        displayed_users = paginator.page(page)
     except:
-        displayed_teams = paginator.page(paginator.num_pages)
+        displayed_users = paginator.page(paginator.num_pages)
 
     return render_to_response("standings.html", {
         'gameName':gameName,
-        'standings':displayed_teams,
+        'standings':displayed_users,
         'games':games,
         
         },

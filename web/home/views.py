@@ -17,6 +17,17 @@ from django.db.models import Max
 
 from web import settings
 
+def get_ranking(user):
+    users = models.User.objects.all()
+    users = users.annotate(score = Max('submission__score'))
+    standings = list(users)
+    standings.sort(key = lambda t: t.score, reverse=True)
+    standing = standings.index(user)
+    score = standings[standing].score
+
+    return standing, score
+
+
 def home(request):
     if not request.user.is_authenticated():
         form = auth_forms.AuthenticationForm()
@@ -29,12 +40,7 @@ def home(request):
         bots = j_models.Submission.objects.filter(user=user)
         botCount = bots.count()
 
-        users = models.User.objects.all()
-        users = users.annotate(score = Max('submission__score'))
-        standings = list(users)
-        standings.sort(key = lambda t: t.score, reverse=True)
-        standing = standings.index(user)
-        score = standings[standing].score
+        standing, score = get_ranking(user)
 
         return render_to_response("home.html", {
             'botCount':botCount,

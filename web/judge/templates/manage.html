@@ -4,8 +4,23 @@
 <div>
   <div id="add-submission" class="calm-blue2">
     <h2>Add a Submission</h2>
-    <p> The contest has ended. The results will be put up on the site soon. </p>
-    
+    <p>
+    Please upload a single source code file containing the bot class.
+    </p>
+    <form method="POST" action="" enctype="multipart/form-data">
+      {% csrf_token %}
+      <table>
+        {{form}}
+        <tr>
+          <td></td>
+          <td>
+            <span class="right">
+              <input type="submit" value="Submit" />
+            </span>
+          </td>
+        </table>
+      </form>
+   
     </div>
     <div id="view-submission">
     <h2>Existing Submissions</h2>
