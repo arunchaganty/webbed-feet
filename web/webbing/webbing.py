@@ -32,7 +32,7 @@ def main():
     db =  Db.MySQLDb(gbl.DB_HOST, gbl.DB_USER, gbl.DB_PASS, gbl.DB_NAME)
     tbl = Db.WebbedFeetTable(db, game=gbl.TBL_GAME, submission=gbl.TBL_SUBMISSION, run=gbl.TBL_RUN)
 
-    schedulers = [Scheduler.CompetitionScheduler2(game) for game in tbl.getGames()]
+    schedulers = [Scheduler.MinRunScheduler(game) for game in tbl.getGames()]
     manager = TaskManager(db)
     for generator in schedulers: manager.addGenerator(generator)
     manager.loopCondition = server_alive

@@ -11,10 +11,11 @@ from datetime import datetime
 
 from web.webbing import errors
 from web.webbing import Bot
+from web.webbing import gbl
 
 class Othello(Game.Game):
-    GAME_CWD = "/home/teju/Projects/Desdemona/"
-    EXECUTABLE = "/home/teju/Projects/Desdemona/bin/Desdemona"
+    GAME_CWD = "/home/teju/Projects/webbed-feet/runnest/othello/"
+    EXECUTABLE = "/home/teju/Projects/webbed-feet/runnest/othello/bin/Desdemona"
     POST_RUN_LOG = "game.log"
 
     BUILDNEST = "/home/teju/Projects/webbed-feet/buildnest/othello/bots/SubmissionBot/"
@@ -101,14 +102,7 @@ class Othello(Game.Game):
 
         # The hook takes care of output codes
         output = output.strip()
-        score = cls.scoreHook(output)
-        if output.isdigit():
-            status = "OK"
-        # Else expect an error code
-        elif output in ["DQ1", "DQ2", "TO1", "TO2", "CR1", "CR2", "ERR"]:
-            status = output
-        else:
-            status = "ERR"
+        score1, score2, status = cls.scoreHook(output)
 
         log_path = ""
         print "Output in hook - <"+output+">"
@@ -127,7 +121,7 @@ class Othello(Game.Game):
             print e
             log_path = ""
 
-        run = Bot.Run(datetime.now(), player1, player2, score, status, log_path)
+        run = Bot.Run(datetime.now(), player1, player2, score1, score2, status, log_path)
 
         return run
 
@@ -139,14 +133,17 @@ class Othello(Game.Game):
             print score
             # 
             if score < 0:
-                score1 = score
-                score2 = -score
-            elif score == 0:
+                score = -score
                 score1 = 0
-                score2 = 0
+                score2 = score + 50
+                print score, score2
+            elif score == 0:
+                score1 = 25
+                score2 = 25 
             elif score > 0:
-                score1 = score
-                score2 = -score
+                score1 = score + 50
+                score2 = 0
+                print score, score1
         except:
             # Else expect an error code
             if output in ["DQ1", "TO1"]:

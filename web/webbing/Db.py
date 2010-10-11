@@ -67,7 +67,7 @@ class GameTable:
         self.weight = weight
 
     def getClass(self):
-        mod = __import__(self.classname, fromlist=[Games])
+        mod = __import__("Games.%s"%(self.classname), fromlist=[Games])
         cls = getattr(mod, self.classname)
         cls.db = self
         return cls
@@ -122,22 +122,19 @@ class GameTable:
             score2, score1 = run.score1, run.score2
 
         count = player1.count + 1
-        if run.status not in ["CR1", "CR2", "ERR"]:  #changed here to give points during disqualification (if run.status not in ["DQ2","TO2","CR1", "CR2", "ERR"]:)
+        if run.status not in ["CR1", "CR2", "ERR"]:  
             score = (score1 + player1.score * player1.count) / float(count)
         else:
             score = player1.score
-	player1.count = player1.count+1 #changed
-	player1.score = score #changed
         query = "UPDATE %s SET `score` = %f, `count` = %d WHERE `id` = %d"%(self.tables["submission"], score, count, player1.id)
         queries.append(query)
 
         count = player2.count + 1
-        if run.status not in ["CR1", "CR2", "ERR"]: #        if run.status not in ["DQ1","TO1","CR1", "CR2", "ERR"]:
+        if run.status not in ["CR1", "CR2", "ERR"]:
             score = (score2 + player2.score * player2.count) / float(count)
         else:
             score = player2.score
-	player2.count = player2.count+1 #changed
-	player2.score = score #changed
+
         query = "UPDATE %s SET `score` = %f, `count` = %d WHERE `id` = %d"%(self.tables["submission"], score, count, player2.id)
         queries.append(query)
 

@@ -3,7 +3,6 @@
 
 import random
 import Task
-import Game
 
 class Scheduler:
     def __init__(self, game):

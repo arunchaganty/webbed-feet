@@ -66,11 +66,11 @@ def standings(request, page=1, gameName=None):
         for game in games:
             # Get the best bot for every user
             submissions = models.Submission.objects.filter(game=game)
-            users = submissions.filter(active=True).values("user_username").annotate(score=Max('score'))
+            users = submissions.filter(active=True).values("user__username").annotate(score=Max('score'))
             for user in users:
                 if not user_score.has_key(user["user__username"]):
                     user_score[user["user__username"]] = 0
-                user_score[user["user_username"]] += user["score"] * game.weight
+                user_score[user["user__username"]] += user["score"] * game.weight
 
         users = user_score.items()
         users.sort(key=lambda kv: kv[1], reverse=True)

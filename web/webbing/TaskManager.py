@@ -33,14 +33,12 @@ class TaskManager:
     def loop(self):
         # Terminate dead threads
         live = []
-        #for thread in self.threads:
-        #    if thread.isAlive():
-        #        live.append(thread)
-        #    else:
-        #        thread.join()
+        for thread in self.threads:
+            if thread.isAlive():
+                live.append(thread)
+            else:
+                thread.join()
         self.threads = live
-	#print 'live threads -',live
-	#print 'parallelism -',self.parallelism    #changed
 
         # Launch threads if possible
         if len(self.threads) < self.parallelism:
@@ -48,20 +46,17 @@ class TaskManager:
                 # First process immediate tasks
                 if len(self.tasks) > 0:
                     task = self.tasks.pop(0)
-		    print 'immediate task'
+                    print 'immediate task'
                 else:
                     # Else generate something from one of the generators
                     source = random.choice(self.sources)
                     task = source.next()
-	   	    print 'generated task'
+                    print 'generated task'
                     print task
                 self.threads.append(task)
                 task.taskManager = self
                 task.start()
-		task.join()
-		print 'joined here'
             except StopIteration:
-		print 'in stop iteration'
                 pass
         return
 
@@ -69,5 +64,5 @@ class TaskManager:
         while True:
             if self.loopCondition():
                 self.loop()
-            #time.sleep(self.period)   #changed
+            time.sleep(self.period)   #changed
 
