@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div>
+  {% if messages %}
+  <div id="messages">
+  <ul class="messages">
+      {% for message in messages %}
+      <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+      {% endfor %}
+  </ul>
+  </div>
+  {% endif %}
+
+  <div>
+    <h3>Introduction</h3>
+    <p>
+        <b>Webbed Feet</b> is simply an online judge that will let you upload your
+    bots, and pit them against others; it was created to help give you a better
+    idea of the competition, and to help you find deficiencies in your bots so
+    that you may create even better ones. Webbed Feet isn't particular to any
+    game as such, but this help document will describe what needs to be done to
+    use it with <b>Desdemona</b> - an <i>Othello game framework</i>. Again, you
+    can find Desdemona <a href="{{MEDIA_URL}}/files/Desdemona.tar.gz">here</a>.
+    </p>
+
+    <a name='top'/>
+    <ul>
+      <li> <a href='#create'>Creating a Bot</a> </li>
+      <li> <a href='#submit'>Submitting a Bot</a> </li>
+    </ul>
+  </div>
+
+  <div>
+    <a name='create' href="#top" ><h3>Creating a Bot</h3></a>
+    <p>
+    Desdemona has a <i>plugin</i> architecture where your code is compiled to a
+    <i>shared library</i> (.so). You don't have to worry about how it handles
+    the libraries, but you can check <a
+      href="http://tldp.org/HOWTO/Program-Library-HOWTO/shared-libraries.html">this
+      HOWTO</a> if you're curious. However, because Desdemona expects a
+    library, it must be compiled specially, using the following flags for gcc,
+    <i>-fPIC</i> and <i>-shared</i>. 
+    </p>
+
+    <h4>Writing Code</h4>
+    <p>
+    Feel free to write code however you like. You <i>must</i> provide 2
+    functions though, <i>createBot</i> and <i>destroyBot</i>, which
+    <i>must</i> be placed inside an <i>extern "C"</i> block. Check the
+    examples to see what needs to be done.
+    </p>
+
+    <p>
+    A couple of simple functions have been provided for your convenience to
+    find the valid moves, etc. in a map. Explore the header files provided
+    with Desdemona to get a better idea of what you can use.
+    </p>
+
+    <h4>Compiling Code</h4>
+    <p>
+    A template setup has already been created for you in <i>/bots/MyBot</i>.
+    In the Makefile, there are two important variables that you might want to
+    modify, <i>$BOT</i> and <i>$OBJS</i>.  If you'd like to rename your bot
+    from MyBot to FooBot you should change the <i>$BOT</i> variable - however,
+    remember that you will also need an appropriate FooBot.cpp. If you'd like
+    to add more files and break up your code, say file1<b>.cpp</b>, file2.cpp,
+    etc., just add file1<b>.o</b>, file2.o, etc. to <i>$OBJS</i> (the .o is
+    important). Also, the output library <i>must</i> be called bot.so for any
+    submission.
+    </p>
+
+    <h4>Creating a Submission</h4>
+    <p>
+    Webbed-Feet expects your submission to be a single <b>.zip</b> file,
+    containing all the files you require and the appropriate makefile. The
+    template setup will automatically do this for you; just type "make
+    submission", which will produce a submission.zip that you can submit.
+    </p>
+
+  </div>
+
+  <div>
+    <a name='submit' href="#top" ><h3>Submitting a Bot</h3></a>
+    <p>
+    Once you've gotten a .zip file as mentioned above, you can submit it in the
+    <a href="{{SITE_URL}}/judge/manage/">Manage Submissions</a> section. Enter
+    in a name to help yourself identify what's special about the bot you've
+    uploaded. I <b>highly</b> recommend that you test out your bot against your
+    own first; several times.
+    </p>
+
+    <p>
+    <ul>
+      <li>Webbed Feet will play the bot with the least number of runs against a
+      randomly selected bot, and continue doing this.  </li>
+      <li>Your bots will only be played against others. If you want to check
+      how they play against your own bots - do it locally.</li>
+      <li> If your bot causes some exception, either a time out, or a crash more
+      than 3 times in a row, it will be deactivated. </li>
+      <li>You are allowed at most 3 active bots at any point in time.</li>
+    </ul>
+    </p>
+  </div>
+
+
+  </div>
+
+</div>
+{% endblock %}
+

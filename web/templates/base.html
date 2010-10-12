@@ -13,7 +13,6 @@
             <img src="{{MEDIA_URL}}/images/logo.jpg" />
         </div>
 	
-
         <div id="linkbar">
           <a href="{{SITE_URL}}/home/">Home</a>
             {% if not user.is_authenticated %}
@@ -26,6 +25,8 @@
 
             &middot; <a href="{{SITE_URL}}/judge/standings/">Standings</a>
             &middot; <a href="{{SITE_URL}}/judge/results/">Match Results</a>
+
+            &middot; <a href="{{SITE_URL}}/home/help/">Help</a>
 
             {% if user.is_authenticated %}
             &middot; <a href="{{SITE_URL}}/logout/">Logout</a> 
