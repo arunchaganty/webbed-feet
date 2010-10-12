@@ -73,13 +73,13 @@ def login(request):
     return HttpResponseRedirect("%s/home/"%(settings.SITE_URL,))
 
 def logout(request):
-    return auth_views.logout(request, "/home/")
+    return auth_views.logout(request, "%s/home/"%(settings.SITE_URL,))
 
 def change_password(request):
-    return auth_views.password_change(request, post_change_redirect="/home/")
+    return auth_views.password_change(request, post_change_redirect="%s/home/"%(settings.SITE_URL,))
 
 def forgot_password(request):
-    return auth_views.password_reset(request, post_reset_redirect="/home/")
+    return auth_views.password_reset(request, post_reset_redirect="%s/home/"%(settings.SITE_URL,))
 
 def register(request):
     if request.POST:

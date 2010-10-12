@@ -13,12 +13,19 @@ from web.webbing import errors
 from web.webbing import Bot
 from web.webbing import gbl
 
+def obliterate(path):
+    for root, dirs, files in os.walk(path):
+        for f in files:
+            os.unlink(os.path.join(root, f))
+        for d in dirs:
+            shutil.rmtree(os.path.join(root, d))
+
 class Othello(Game.Game):
-    GAME_CWD = "/home/teju/Projects/webbed-feet/runnest/othello/"
-    EXECUTABLE = "/home/teju/Projects/webbed-feet/runnest/othello/bin/Desdemona"
+    GAME_CWD = os.path.join(gbl.ROOT_DIR, "runnest/othello/")
+    EXECUTABLE = os.path.join(gbl.ROOT_DIR, "runnest/othello/bin/Desdemona")
     POST_RUN_LOG = "game.log"
 
-    BUILDNEST = "/home/teju/Projects/webbed-feet/buildnest/othello/bots/SubmissionBot/"
+    BUILDNEST = os.path.join(gbl.ROOT_DIR, "buildnest/othello/bots/SubmissionBot")
     BOT_OUTPUT = "bot.so"
 
     @classmethod 
@@ -42,7 +49,7 @@ class Othello(Game.Game):
             for name in f.namelist():
                 path = os.path.join(cls.BUILDNEST, name)
                 f_ = open(path, "wb")
-                f_.write( f.read( path ) )
+                f_.write( f.read( name ) )
                 f_.close()
 
         # make in the buildnest
@@ -83,16 +90,15 @@ class Othello(Game.Game):
         botSo.close()
 
         # Clean up 
-        shutil.rmtree(cls.BUILDNEST)
-
+        obliterate(cls.BUILDNEST)
 
         return uploaded_file
 
     @classmethod
     def runHook(cls, player1, player2):
         # Get arguments for the game
-        so1 = os.path.join(gbl.BASE_LOCATION, player1.data)
-        so2 = os.path.join(gbl.BASE_LOCATION, player2.data)
+        so1 = os.path.join(gbl.MEDIA_DIR, player1.data)
+        so2 = os.path.join(gbl.MEDIA_DIR, player2.data)
         args = [cls.EXECUTABLE, so1, so2]
 
         # Run the game
@@ -114,10 +120,10 @@ class Othello(Game.Game):
                 sha1sum = hashlib.sha1(open(log_in).read()).hexdigest()
 
                 log_path = os.path.join("logs",sha1sum)
-                log_out = os.path.join(gbl.BASE_LOCATION, log_path)
+                log_out = os.path.join(gbl.MEDIA_DIR, log_path)
                 # Copy the log file to the log location
                 shutil.copy(log_in, log_out)
-        except StandardError as e:
+        except StandardError, e:
             print e
             log_path = ""
 

@@ -115,12 +115,8 @@ class GameTable:
         queries.append(query)
 
         # Update scores
-        if run.score1 > 0:
-            player1, player2 = run.player1, run.player2
-            score1, score2 = run.score1, run.score2
-        else:
-            player2, player1 = run.player1, run.player2
-            score2, score1 = run.score1, run.score2
+        player1, player2 = run.player1, run.player2
+        score1, score2 = run.score1, run.score2
 
         count = player1.count + 1
         if run.status in ["OK"]:  
