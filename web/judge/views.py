@@ -55,7 +55,7 @@ def standings(request, page=1, gameName=None):
             game = games.get(name=gameName)
             # Get the best bot for every user
             submissions = models.Submission.objects.filter(game = game)
-            users = submissions.filter(active=True).values("user__username").annotate(score=Max('score')).order_by('-score').values("name", "user__username", "score")
+            users = submissions.filter(active=True).values("user__username", "name").annotate(score=Max('score')).order_by('-score').values("name", "user__username", "score")
 
             standings = list(users)
         except exceptions.ObjectDoesNotExist:
