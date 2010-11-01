@@ -8,6 +8,7 @@ from web.home.models import User
 from web.webbing import errors
 from web.webbing import Games
 from web.webbing import Schedulers
+from web.webbing import gbl
 
 class Game( models.Model ):
     """Defines a type of game. 
@@ -110,7 +111,7 @@ class Run( models.Model ):
             player1.failures = 0
         elif status in ["DQ2", "TO2", "CR2"]:  
             player1.score = (score1 + player1.score * player1.count) / float(count)
-        elif status in ["DQ1", "TO1", "CR1"]:  
+        elif status in ["DQ1", "TO1", "CR1", "ERR"]:  
             player1.failures += 1 
             if player1.failures == gbl.FAIL_CHANCES:
                 player1.active = False
@@ -125,11 +126,11 @@ class Run( models.Model ):
             player2.failures = 0
         elif status in ["DQ2", "TO2", "CR2"]:  
             player2.score = (score2 + player2.score * player2.count) / float(count)
-        elif status in ["DQ2", "TO2", "CR2"]:  
-            player2.failures += 2 
+        elif status in ["DQ2", "TO2", "CR2", "ERR"]:  
+            player2.failures += 1 
             if player2.failures == gbl.FAIL_CHANCES:
                 player2.active = False
-        player2.count += 2
+        player2.count += 1
         player2.save()
 
 
