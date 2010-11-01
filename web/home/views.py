@@ -55,7 +55,11 @@ def home(request):
             context_instance = RequestContext(request))
 
 def ping(request):
-    return HttpResponse("")
+    dirty_bits = j_models.Game.objects.all().values("dirty")
+    is_dirty = any( [ game["dirty"] for game in dirty_bits ] )
+    dirty_bits = j_models.Game.objects.all().update(dirty=False)
+    
+    return HttpResponse("%d"%(is_dirty))
 
 def login(request):
     if request.POST:

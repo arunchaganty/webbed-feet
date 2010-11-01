@@ -38,7 +38,7 @@ class TaskManager:
         self.tasks.append(task)
         
     def loop_condition(self):
-        return True
+        return False, False
 
     def loop(self):
         # Terminate dead threads
@@ -71,7 +71,17 @@ class TaskManager:
 
     def run(self):
         while True:
-            if self.loop_condition():
-                self.loop()
+            stop, restart = self.loop_condition()
+            if stop:
+                break
+
+            if restart:
+                for thread in self.threads:
+                    thread.join()
+                self.sources = []
+                self.tasks = []
+                self.add_generators()
+
+            self.loop()
             time.sleep(self.period)   #changed
 

@@ -10,28 +10,34 @@ import gbl
 
 from TaskManager import TaskManager
 
-def server_alive():
-   # Periodically ping the webbed-feet server to check if it is alive. 
-   url = gbl.PING_URL
+class PingingTaskManager(TaskManager):
+    def loop_condition(self):
+        """Should the manager stop, restart?"""
+        # Periodically ping the webbed-feet server to check if it is alive. 
+        url = gbl.PING_URL
 
-   try :
-       f = urllib2.urlopen(url)
-       if f.code != 200:
-           raise Exception("Can not ping server")
-       else:
-           print "Server still alive..."
-   except StandardError, e:
-       print "Server error: ", str(e)
-       return False
+        stop, restart = False, False
 
-   return True
+        try :
+            f = urllib2.urlopen(url)
+            if f.code != 200:
+                raise Exception("Can not ping server")
+            else:
+                code = f.read()
+                print "Server returned", code
+                if code == "1":
+                    print "Restarting server"
+                    restart = True
+        except StandardError, e:
+            print "Server error: ", str(e)
+            stop = True
+
+        return stop, restart
 
 def main():
     # Add to a work queue. 
 
-    manager = TaskManager()
-    manager.loop_condition = server_alive
-
+    manager = PingingTaskManager()
     manager.run()
 
 if __name__ == "__main__":

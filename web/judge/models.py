@@ -17,6 +17,7 @@ class Game( models.Model ):
     schedulername = models.CharField( max_length=100 )
     active = models.BooleanField( default=True )
     weight = models.FloatField(default=1.0)
+    dirty = models.BooleanField( default=False ) # Whether webbing should reset itself or not
 
     def get_class(self):
         # Try to import a class from Games
@@ -136,6 +137,10 @@ def reset_game(modeladmin, request, queryset):
     for game in queryset:
         Run.objects.filter(player1__game=game).delete()
         Submission.objects.filter(game=game).update(score=0, failures=0, count=0)
+
+        # Set the dirty bit
+        game.dirty = True
+        game.save()
 reset_game.short_description = "Reset Game"
 
 class GameAdmin( admin.ModelAdmin ):
