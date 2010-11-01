@@ -38,6 +38,7 @@ class Submission( models.Model ):
 
     # Actual contents
     name = models.CharField(max_length=100)
+    src = models.FileField( upload_to='bot_src' )
     data = models.FileField( upload_to='bots' )
     comments = models.TextField(null=True, blank=True)
 

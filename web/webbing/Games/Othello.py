@@ -9,6 +9,9 @@ import hashlib
 import subprocess
 from datetime import datetime
 
+import tempfile 
+from django.core.files.base import File
+
 from web.webbing import errors
 from web.webbing import Bot
 from web.webbing import gbl
@@ -82,11 +85,10 @@ class Othello(Game.Game):
                    break
                yield data
 
-        uploaded_file.truncate(0)
+        uploaded_file = File(tempfile.NamedTemporaryFile())
         for piece in read_in_chunks(botSo):
             uploaded_file.write(piece)
         uploaded_file.size = os.stat(os.path.join(cls.BUILDNEST, cls.BOT_OUTPUT)).st_size
-        uploaded_file.close()
         botSo.close()
 
         # Clean up 

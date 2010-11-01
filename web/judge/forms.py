@@ -6,26 +6,30 @@ from web.webbing.Games import Game
 
 import settings
 import models
+import copy
 
 import hashlib
 
 class SubmissionForm( forms.ModelForm ):
     """Used to submit a bot"""
 
-    data = forms.FileField(label="Bot Code")
+    src = forms.FileField(label="Bot Code")
     class Meta:
         model = models.Submission
-        fields = ('game', 'name', 'data', 'comments')
+        fields = ('game', 'name', 'src', 'comments')
 
     def clean(self):
         forms.ModelForm.clean(self)
 
         if self.is_valid():
             # Add the SHA1SUM
+            self.cleaned_data["data"] = self.clean_data()
             self.clean_sha1sum()
 
             # Rename the file by it's SHA1SUM
+            self.cleaned_data["src"].name = self.cleaned_data["sha1sum"] + ".zip"
             self.cleaned_data["data"].name = self.cleaned_data["sha1sum"]
+            self.instance.data = self.cleaned_data["data"]
             self.instance.sha1sum = self.cleaned_data["sha1sum"]
             self.instance.active = True
 
@@ -41,7 +45,7 @@ class SubmissionForm( forms.ModelForm ):
 
     def clean_sha1sum(self):
         data = self.cleaned_data["data"]
-        data.open('rb')
+        data.seek(0)
         hsh = hashlib.sha1()
         while True:
             bits = data.read(128)
@@ -49,7 +53,7 @@ class SubmissionForm( forms.ModelForm ):
                 break
             hsh.update(bits)
         self.cleaned_data["sha1sum"] = hsh.hexdigest()
-        data.close()
+        data.seek(0)
 
     def clean_data(self):
         game = self.cleaned_data["game"]
@@ -57,10 +61,12 @@ class SubmissionForm( forms.ModelForm ):
         # Get the game class
         try:
             cls = game.cls
-        except AttributeError:
+        except AttributeError as e:
+            print e 
+
             raise forms.ValidationError("Error in judge. Please contact event coordinators")
 
-        data = self.cleaned_data["data"]
+        data = copy.copy(self.cleaned_data["src"])
 
         try:
             data = cls.submissionHook(data)
