@@ -47,8 +47,8 @@
     {% for run in runs.object_list %}
     <tr class="{% cycle 'dark' 'light' %}">
       <td><b>{{run.timestamp}}</b></td>
-      <td>{{run.player1.team}} ({{run.player1.name}})</td>
-      <td>{{run.player2.team}} ({{run.player2.name}})</td>
+      <td>{{run.player1.user}} ({{run.player1.name}})</td>
+      <td>{{run.player2.user}} ({{run.player2.name}})</td>
       <td>{{run.get_status_display}}</td>
       <td>{{run.score1}}</td>
       <td>{{run.score2}}</td>
