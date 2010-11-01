@@ -24,6 +24,17 @@
     </div>
     <div id="view-submission">
     <h2>Existing Submissions</h2>
+
+    {% if messages %}
+    <div id="messages">
+    <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    </div>
+    {% endif %}
+
     <p>Click bot for it's match details</p>
     {% if submissions %}
         <table id="submissions" class="results">
