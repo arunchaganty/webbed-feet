@@ -46,6 +46,34 @@ def manage(request):
             'submissions':submissions},
             context_instance = RequestContext(request))
 
+@login_required()
+def activate(request, bot_id):
+    try:
+        submission = models.Submission.objects.get(user = request.user, id=bot_id)
+        active_bot_count = models.Submission.objects.filter(user = request.user, active=True).count()
+        if active_bot_count >= settings.MAX_ACTIVE_BOTS:
+            messages.error(request, "You already have the maximum allowed number of active bots (%d)"%(settings.MAX_ACTIVE_BOTS) )
+        else:
+            submission.active = True
+            submission.save()
+            messages.info(request, "Bot activated")
+    except exceptions.ObjectDoesNotExist:
+        messages.error(request, "No bot by that id exists")
+
+    return HttpResponseRedirect("%s/judge/manage/"%(settings.SITE_URL,))
+
+@login_required()
+def deactivate(request, bot_id):
+    try:
+        submission = models.Submission.objects.get(user = request.user, id=bot_id)
+        submission.active = False
+        submission.save()
+        messages.info(request, "Bot deactivated")
+    except exceptions.ObjectDoesNotExist:
+        messages.error(request, "No bot by that id exists")
+
+    return HttpResponseRedirect("%s/judge/manage/"%(settings.SITE_URL,))
+
 def standings(request, page=1, gameName=None):
     """Create a standings listing"""
     games = models.Game.objects.filter(active=True)

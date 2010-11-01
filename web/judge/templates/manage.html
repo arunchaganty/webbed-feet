@@ -42,7 +42,12 @@
           <td>{{submission.score}}</td>
           <td>{{submission.count}}</td>
           <td>{{submission.timestamp}}</td>
-          <td {%if not submission.active %} class="warning" {%endif%}> {% if submission.active %} Active {% else %} Inactive {% endif %}</td>
+          <td>{% if submission.active %} 
+            <a href="{{SITE_URL}}/judge/manage/deactivate/{{submission.id}}/">Active</a> 
+            {% else %} 
+            <a href="{{SITE_URL}}/judge/manage/activate/{{submission.id}}/">Inactive</a> 
+            {% endif %}
+          </td>
           <td>{{submission.comments}}</td>
         </tr>
         {% endfor %}
