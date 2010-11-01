@@ -99,8 +99,8 @@ class Othello(Game.Game):
     @classmethod
     def runHook(cls, player1, player2):
         # Get arguments for the game
-        so1 = os.path.join(gbl.MEDIA_DIR, player1.data)
-        so2 = os.path.join(gbl.MEDIA_DIR, player2.data)
+        so1 = os.path.join(gbl.MEDIA_DIR, str(player1.data))
+        so2 = os.path.join(gbl.MEDIA_DIR, str(player2.data))
         args = [cls.EXECUTABLE, so1, so2]
 
         # Run the game

@@ -1,3 +1,4 @@
+#!/usr/bin/env python2
 # Scheduler for matches 
 
 #import settings
@@ -8,8 +9,6 @@ import time
 import gbl
 
 from TaskManager import TaskManager
-import Scheduler
-import Db
 
 def server_alive():
    # Periodically ping the webbed-feet server to check if it is alive. 
@@ -29,13 +28,9 @@ def server_alive():
 
 def main():
     # Add to a work queue. 
-    db =  Db.MySQLDb(gbl.DB_HOST, gbl.DB_USER, gbl.DB_PASS, gbl.DB_NAME)
-    tbl = Db.WebbedFeetTable(db, game=gbl.TBL_GAME, submission=gbl.TBL_SUBMISSION, run=gbl.TBL_RUN)
 
-    schedulers = [Scheduler.MinRunScheduler(game) for game in tbl.getGames()]
-    manager = TaskManager(db)
-    for generator in schedulers: manager.addGenerator(generator)
-    manager.loopCondition = server_alive
+    manager = TaskManager()
+    manager.loop_condition = server_alive
 
     manager.run()
 

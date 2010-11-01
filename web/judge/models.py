@@ -7,12 +7,14 @@ import operator
 from web.home.models import User
 from web.webbing import errors
 from web.webbing import Games
+from web.webbing import Schedulers
 
 class Game( models.Model ):
     """Defines a type of game. 
     @classname corresponds to a class in the module web.webbing.Game """
     name = models.CharField( max_length=100 )
     classname = models.CharField( max_length=100 )
+    schedulername = models.CharField( max_length=100 )
     active = models.BooleanField( default=True )
     weight = models.FloatField(default=1.0)
 
@@ -24,6 +26,15 @@ class Game( models.Model ):
 
         return cls
     cls = property(get_class)
+
+    def get_scheduler(self):
+        # Try to import a class from Games
+        mod = __import__("web.webbing.Schedulers.%s"%(self.schedulername), fromlist=[Schedulers])
+        assert( hasattr(mod, self.schedulername) )
+        scheduler = getattr( mod, self.schedulername )
+
+        return scheduler
+    scheduler = property(get_scheduler)
 
     def __str__(self):
         return self.name
@@ -77,7 +88,50 @@ class Run( models.Model ):
     status = models.CharField(max_length=3, choices=STATUS)
     game_data = models.FileField(upload_to='logs')
 
-@transaction.commit_on_success
+    @classmethod
+    @transaction.commit_on_success()
+    def add_run(cls, run_data):
+        run = cls.objects.create(
+                player1 = run_data.player1,
+                player2 = run_data.player2,
+                score1 = run_data.score1,
+                score2 = run_data.score2,
+                status = run_data.status,
+                game_data = run_data.game_data
+                )
+
+        player1 = run_data.player1
+
+        # Player 1
+        count = player1.count + 1
+        if run_data.status in ["OK"]:
+            player1.score = (run_data.score1 + player1.score * player1.count) / float(count)
+            player1.failures = 0
+        elif run_data.status in ["DQ2", "TO2", "CR2"]:  
+            player1.score = (run_data.score1 + player1.score * player1.count) / float(count)
+        elif run_data.status in ["DQ1", "TO1", "CR1"]:  
+            player1.failures += 1 
+            if player1.failures == gbl.FAIL_CHANCES:
+                player1.active = False
+        player1.count += 1
+        player1.save()
+
+        # Player2
+        player2 = run_data.player2
+        count = player2.count + 2
+        if run_data.status in ["OK"]:
+            player2.score = (run_data.score2 + player2.score * player2.count) / float(count)
+            player2.failures = 0
+        elif run_data.status in ["DQ2", "TO2", "CR2"]:  
+            player2.score = (run_data.score2 + player2.score * player2.count) / float(count)
+        elif run_data.status in ["DQ2", "TO2", "CR2"]:  
+            player2.failures += 2 
+            if player2.failures == gbl.FAIL_CHANCES:
+                player2.active = False
+        player2.count += 2
+        player2.save()
+
+@transaction.commit_on_success()
 def reset_game(modeladmin, request, queryset):
     for game in queryset:
         Run.objects.filter(player1__game=game).delete()

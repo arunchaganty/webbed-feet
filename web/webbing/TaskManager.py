@@ -5,6 +5,8 @@ import time
 import random
 import subprocess
 
+from web.judge import models
+
 import gbl
 
 class TaskManager:
@@ -15,26 +17,34 @@ class TaskManager:
     sources = []
     tasks = []
 
-    def __init__(self, db, period = gbl.MAINLOOP_PERIOD, parallelism=1):
-        self.db = db
+    def __init__(self, period = gbl.MAINLOOP_PERIOD, parallelism=1):
         self.period = period
         self.parallelism = parallelism
 
-    def addGenerator(self, generator):
+        self.add_generators()
+
+    def add_generators(self):
+        """Add generators for all the games"""
+        for game in models.Game.objects.all():
+            if game.active:
+                gen = game.scheduler.schedule( game )
+                self.add_generator( gen )
+
+    def add_generator(self, generator):
         self.sources.append(generator.__iter__())
 
-    def addTask(self, task):
+    def add_task(self, task):
         """Add an immediate task"""
         self.tasks.append(task)
         
-    def loopCondition(self):
+    def loop_condition(self):
         return True
 
     def loop(self):
         # Terminate dead threads
         live = []
         for thread in self.threads:
-            if thread.isAlive():
+            if thread.is_alive():
                 live.append(thread)
             else:
                 thread.join()
@@ -51,8 +61,7 @@ class TaskManager:
                     # Else generate something from one of the generators
                     source = random.choice(self.sources)
                     task = source.next()
-                    print 'generated task'
-                    print task
+                    print 'generated task', task
                 self.threads.append(task)
                 task.taskManager = self
                 task.start()
@@ -62,7 +71,7 @@ class TaskManager:
 
     def run(self):
         while True:
-            if self.loopCondition():
+            if self.loop_condition():
                 self.loop()
             time.sleep(self.period)   #changed
 
