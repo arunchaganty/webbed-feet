@@ -3,6 +3,7 @@
 import Game
 
 import os
+import signal
 import shutil
 import zipfile
 import hashlib
@@ -105,12 +106,27 @@ class Othello(Game.Game):
 
         # Run the game
         p = subprocess.Popen(args, stdout=subprocess.PIPE, cwd=cls.GAME_CWD)
+
+        # Time the execution
+        start = time.time()
+        while (time.time() - start) < gbl.TIMEOUT:
+            ret = p.poll()
+            if ret != None: break
+        else:
+            os.kill( p.pid, signal.SIGTERM )
+            ret = p.poll()
+            if not ret:
+                os.kill( p.pid, signal.SIGKILL )
+                ret = p.poll()
+                
         output = p.communicate()[0]
-        ret = p.wait()
 
         # The hook takes care of output codes
         output = output.strip()
-        score1, score2, status = cls.scoreHook(output)
+        try:
+            score1, score2, status = cls.scoreHook(output)
+        except:
+            score1, score2, status = 0, 0, "ERR"
 
         log_path = ""
         print "Output in hook - <"+output+">"
@@ -135,38 +151,44 @@ class Othello(Game.Game):
 
     @classmethod
     def scoreHook(cls, output):
-        try:
-            status = "OK"
-            score = int(output)
-            print score
-            # 
-            if score < 0:
-                score = -score
-                score1 = 0
-                score2 = score + 50
-                print score, score2
-            elif score == 0:
-                score1 = 25
-                score2 = 25 
-            elif score > 0:
-                score1 = score + 50
-                score2 = 0
-                print score, score1
-        except:
-            # Else expect an error code
-            if output in ["DQ1", "TO1"]:
-                status = output
-                score1 = -50
-                score2 = 50
-            elif output in ["DQ2", "TO2"]:
-                status = output
-                score1 = 50
-                score2 = -50
-            else: # output in ["CR1", "CR2", "ERR"]:
-                if output not in ["CR1", "CR2", "ERR"]:
-                    output = "ERR"
-                status = output
-                score1 = 0
-                score2 = 0
+        lines = output.splitlines()
+        if len(lines) == 1:
+            try:
+                status = "OK"
+                score = int(output)
+                print score
+                # 
+                if score < 0:
+                    score = -score
+                    score1 = 0
+                    score2 = score + 50
+                elif score == 0:
+                    score1 = 25
+                    score2 = 25 
+                elif score > 0:
+                    score1 = score + 50
+                    score2 = 0
+            except:
+                # Else expect an error code
+                if output in ["DQ1", "TO1"]:
+                    status = output
+                    score1 = -50
+                    score2 = 50
+                elif output in ["DQ2", "TO2"]:
+                    status = output
+                    score1 = 50
+                    score2 = -50
+                else: # output in ["CR1", "CR2", "ERR"]:
+                    if output not in ["CR1", "CR2", "ERR"]:
+                        output = "ERR"
+                    status = output
+                    score1 = 0
+                    score2 = 0
+        else:
+            output = "ERR"
+            status = output
+            score1 = 0
+            score2 = 0
 
         return score1, score2, status
+
