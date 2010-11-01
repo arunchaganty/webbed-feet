@@ -3,6 +3,7 @@
 import Game
 
 import os
+import time
 import signal
 import shutil
 import zipfile
@@ -109,8 +110,10 @@ class Othello(Game.Game):
         # Time the execution
         start = time.time()
         while (time.time() - start) < gbl.TIMEOUT:
+            # Keep polling
             ret = p.poll()
             if ret != None: break
+            time.sleep(1)
         else:
             os.kill( p.pid, signal.SIGTERM )
             ret = p.poll()
