@@ -17,7 +17,8 @@ class MinRunScheduler(Scheduler.Scheduler):
                 continue
 
             player1 = candidates[0]
-            players = [player1, random.choice(candidates[1:])]
+            candidates_ = [c for c in candidates[1:] if c.user != player1.user]
+            players = [player1, random.choice(candidates_)]
 
             # Choose a start position at random
             random.shuffle(players)

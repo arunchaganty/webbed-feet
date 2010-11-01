@@ -13,7 +13,6 @@ import tempfile
 from django.core.files.base import File
 
 from web.webbing import errors
-from web.webbing import Bot
 from web.webbing import gbl
 
 def obliterate(path):
@@ -129,7 +128,7 @@ class Othello(Game.Game):
             print e
             log_path = ""
 
-        run = Bot.Run(datetime.now(), player1, player2, score1, score2, status, log_path)
+        run = (datetime.now(), player1, player2, score1, score2, status, log_path)
 
         return run
 

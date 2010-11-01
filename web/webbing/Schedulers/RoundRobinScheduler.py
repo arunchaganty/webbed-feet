@@ -18,7 +18,7 @@ class RoundRobinScheduler(Scheduler.Scheduler):
 
             # And play against everyone else
             for player2 in candidates:
-                if player1 == player2: continue
+                if player1.user == player2.user: continue
 
                 players = [player1, player2]
                 yield Scheduler.GameRunTask(game.cls, *players)

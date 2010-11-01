@@ -61,7 +61,7 @@ class SubmissionForm( forms.ModelForm ):
         # Get the game class
         try:
             cls = game.cls
-        except AttributeError as e:
+        except AttributeError, e:
             print e 
 
             raise forms.ValidationError("Error in judge. Please contact event coordinators")
