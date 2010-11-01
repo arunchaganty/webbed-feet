@@ -2,20 +2,13 @@
 
 # Daemon Properties
 MAINLOOP_PERIOD = 60 # seconds
-# PING_URL = "URL/home/ping"
+#PING_URL = "URL/home/ping"
 #ROOT_DIR="/path/to/webbed-feet/"
 #MEDIA_DIR="/path/to/media/"
-
-DB_HOST="localhost"
-DB_USER=""
-DB_PASS=""
-DB_NAME=""
-
-TBL_GAME="judge_game"
-TBL_SUBMISSION="judge_submission"
-TBL_RUN="judge_run"
 
 FAIL_CHANCES=3
 
 import sys
+import os
 sys.path.append(ROOT_DIR)
+os.environ['DJANGO_SETTINGS_MODULE'] = 'web.settings'
