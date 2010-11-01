@@ -8,7 +8,7 @@ class MinRunScheduler(Scheduler.Scheduler):
     def schedule(cls, game):
         while True:
             # Only two players
-            candidates = game.submission_set.all().order_by("count")
+            candidates = game.submission_set.filter(active=True).order_by("count")
             
             # If no candidates, just return a 'waste-time' task
             if len(candidates) < 2:
