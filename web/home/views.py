@@ -29,12 +29,16 @@ def get_ranking(user):
 
 
 def home(request):
+    notices = models.Notice.objects.all().order_by("-timestamp")
+
     if not request.user.is_authenticated():
         form = auth_forms.AuthenticationForm()
         
-        return render_to_response("home.html", 
-                {'form':form,},
-                context_instance = RequestContext(request))
+        return render_to_response("home.html", {
+            'form':form,
+            'notices':notices
+            },
+            context_instance = RequestContext(request))
     else:
         user = request.user
         bots = j_models.Submission.objects.filter(user=user)
@@ -46,6 +50,7 @@ def home(request):
             'botCount':botCount,
             'standing':standing + 1,
             'score':score,
+            'notices':notices,
             },
             context_instance = RequestContext(request))
 
