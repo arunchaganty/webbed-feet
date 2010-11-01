@@ -26,6 +26,10 @@
             &middot; <a href="{{SITE_URL}}/judge/standings/">Standings</a>
             &middot; <a href="{{SITE_URL}}/judge/results/">Match Results</a>
 
+            {% if user.is_superuser %}
+            &middot; <a href="{{SITE_URL}}/admin/">Administer</a>
+            {% endif %}
+
             &middot; <a href="{{SITE_URL}}/home/help/">Help</a>
 
             {% if user.is_authenticated %}

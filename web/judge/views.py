@@ -13,7 +13,7 @@ from django.db.models import Max
 
 from django.core import exceptions
 
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from web import settings
 
 RUNS_PER_PAGE = 25

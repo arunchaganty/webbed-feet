@@ -1,4 +1,6 @@
 from django.db import models
+from django.db import transaction
+from django.contrib import admin
 
 import operator
 
@@ -58,6 +60,11 @@ class Submission( models.Model ):
     def __unicode__(self):
         return "[Submission %s]"%(self.sha1sum)
 
+class SubmissionAdmin( admin.ModelAdmin ):
+    list_display = ('name', 'user', 'game')
+    search_fields = ['user__username']
+
+
 class Run( models.Model ):
     """Actual run of the game"""
     STATUS = errors.STATUS
@@ -69,4 +76,14 @@ class Run( models.Model ):
     score2 = models.IntegerField()
     status = models.CharField(max_length=3, choices=STATUS)
     game_data = models.FileField(upload_to='logs')
- 
+
+@transaction.commit_on_success
+def reset_game(modeladmin, request, queryset):
+    for game in queryset:
+        Run.objects.filter(player1__game=game).delete()
+        Submission.objects.filter(game=game).update(score=0, failures=0, count=0)
+reset_game.short_description = "Reset Game"
+
+class GameAdmin( admin.ModelAdmin ):
+    actions = [reset_game]
+
