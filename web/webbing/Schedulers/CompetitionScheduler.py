@@ -17,7 +17,7 @@ class CompetitionScheduler(Scheduler.Scheduler):
         for i in range(RUN_COUNT):
             for player1 in candidates:
                 for player2 in candidates:
-                    if player1 == player2: continue
+                    if player1.user == player2.user: continue
 
                     players = [player1, player2]
 

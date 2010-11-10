@@ -15,7 +15,6 @@ import tempfile
 from django.core.files.base import File
 
 from web.webbing import errors
-from web.webbing import Bot
 from web.webbing import gbl
 
 def obliterate(path):
@@ -111,8 +110,10 @@ class Othello(Game.Game):
         # Time the execution
         start = time.time()
         while (time.time() - start) < gbl.TIMEOUT:
+            # Keep polling
             ret = p.poll()
             if ret != None: break
+            time.sleep(1)
         else:
             os.kill( p.pid, signal.SIGTERM )
             ret = p.poll()

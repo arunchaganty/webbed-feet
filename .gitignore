@@ -11,6 +11,7 @@ web/media/logs/
 web/media/admin/
 web/desdemona.db
 web/apache/django.wsgi
+web/apache/auth.wsgi
 web/webbing/gbl.py
 buildnest/
 runnest/

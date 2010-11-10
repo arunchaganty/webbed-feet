@@ -94,7 +94,6 @@ class Run( models.Model ):
     @transaction.commit_on_success()
     def add_run(cls, run_data):
         timestamp, player1, player2, score1, score2, status, game_data = run_data
-            
         run = cls.objects.create(
                 timestamp = timestamp,
                 player1 = player1,
@@ -133,6 +132,7 @@ class Run( models.Model ):
                 player2.active = False
         player2.count += 1
         player2.save()
+
 
 @transaction.commit_on_success()
 def reset_game(modeladmin, request, queryset):

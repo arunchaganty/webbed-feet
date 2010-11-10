@@ -16,3 +16,6 @@ class ThreadedTask(threading.Thread):
     def run(self):
         print "%s complete"%(str(self))
 
+    def is_alive(self):
+        return self.isAlive()
+
