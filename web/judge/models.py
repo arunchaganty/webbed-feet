@@ -108,28 +108,28 @@ class Run( models.Model ):
         # Player 1
         count = player1.count + 1
         if status in ["OK"]:
-            player1.score = (score1 + player1.score * player1.count) / float(count)
+            player1.score = float(score1 + player1.score * player1.count) / float(count)
             player1.failures = 0
         elif status in ["DQ2", "TO2", "CR2"]:  
-            player1.score = (score1 + player1.score * player1.count) / float(count)
+            player1.score = float(score1 + player1.score * player1.count) / float(count)
         elif status in ["DQ1", "TO1", "CR1", "ERR"]:  
             player1.failures += 1 
-            if player1.failures == gbl.FAIL_CHANCES:
+            if player1.failures >= gbl.FAIL_CHANCES:
                 player1.active = False
         player1.count += 1
         player1.save()
 
         # Player2
         player2 = player2
-        count = player2.count + 2
+        count = player2.count + 1
         if status in ["OK"]:
-            player2.score = (score2 + player2.score * player2.count) / float(count)
+            player2.score = float(score2 + player2.score * player2.count) / float(count)
             player2.failures = 0
-        elif status in ["DQ2", "TO2", "CR2"]:  
-            player2.score = (score2 + player2.score * player2.count) / float(count)
+        elif status in ["DQ1", "TO1", "CR1"]:  
+            player2.score = float(score2 + player2.score * player2.count) / float(count)
         elif status in ["DQ2", "TO2", "CR2", "ERR"]:  
             player2.failures += 1 
-            if player2.failures == gbl.FAIL_CHANCES:
+            if player2.failures >= gbl.FAIL_CHANCES:
                 player2.active = False
         player2.count += 1
         player2.save()
