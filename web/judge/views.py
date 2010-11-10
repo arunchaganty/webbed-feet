@@ -76,7 +76,7 @@ def deactivate(request, bot_id):
 
 def standings(request, page=1, gameName=None):
     """Create a standings listing"""
-    games = models.Game.objects.filter(active=True)
+    games = models.Game.objects.all() #filter(active=True)
 
     if gameName:
         try: 
@@ -122,7 +122,7 @@ def results(request, bot_id=None, page=1, gameName=None):
     # Game
     bot = None
     game = None
-    games = models.Game.objects.filter(active=True)
+    games = models.Game.objects.all() #filter(active=True)
 
     if gameName != None:
         try:
