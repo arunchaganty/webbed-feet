@@ -13,7 +13,7 @@ import hashlib
 class SubmissionForm( forms.ModelForm ):
     """Used to submit a bot"""
 
-    game = forms.ModelChoiceField(queryset=models.Game.objects.filter(active=True))
+    game = forms.ModelChoiceField(queryset=models.Game.objects.filter(submittable=True))
     src = forms.FileField(label="Bot Code")
     class Meta:
         model = models.Submission

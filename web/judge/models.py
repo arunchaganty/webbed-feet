@@ -17,6 +17,7 @@ class Game( models.Model ):
     classname = models.CharField( max_length=100 )
     schedulername = models.CharField( max_length=100 )
     active = models.BooleanField( default=True )
+    submittable = models.BooleanField( default=True )
     weight = models.FloatField(default=1.0)
     dirty = models.BooleanField( default=False ) # Whether webbing should reset itself or not
 
