@@ -174,12 +174,12 @@ class Othello(Game.Game):
                 # Else expect an error code
                 if output in ["DQ1", "TO1"]:
                     status = output
-                    score1 = -50
-                    score2 = 50
+                    score1 = 0
+                    score2 = 50 + 64
                 elif output in ["DQ2", "TO2"]:
                     status = output
-                    score1 = 50
-                    score2 = -50
+                    score1 = 50 + 64
+                    score2 = 0
                 else: # output in ["CR1", "CR2", "ERR"]:
                     if output not in ["CR1", "CR2", "ERR"]:
                         output = "ERR"
