@@ -8,7 +8,7 @@ class CompetitionScheduler(Scheduler.Scheduler):
     @classmethod
     def schedule(cls, game):
         # Only two players
-        candidates = game.submission_set.filter(active=True).order_by("count")
+        candidates = game.submission_set.filter(active=True, user__is_active = True).order_by("count")
 
         if len(candidates) < 2:
             print "Insufficient candidates"

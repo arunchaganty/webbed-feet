@@ -31,7 +31,7 @@ def manage(request):
         if form.is_valid():
             form.save()
             # Set the first MAX_ACTIVE_BOTS bots 'active', and make all the rest inactive
-            bots = models.Submission.objects.filter(user = request.user, active=True).order_by('-timestamp')
+            bots = models.Submission.objects.filter(user = request.user, active=True, user__is_active = True).order_by('-timestamp')
             if len(bots) > settings.MAX_ACTIVE_BOTS:
                 for bot in bots[settings.MAX_ACTIVE_BOTS:]: 
                     bot.active = False
@@ -39,7 +39,7 @@ def manage(request):
     else:
         form = forms.SubmissionForm()
 
-    submissions = models.Submission.objects.filter(user = request.user).order_by('-timestamp')
+    submissions = models.Submission.objects.filter(user = request.user, user__is_active = True).order_by('-timestamp')
 
     return render_to_response("manage.html", 
             {'form':form,
@@ -83,7 +83,7 @@ def standings(request, page=1, gameName=None):
             game = games.get(name=gameName)
             # Get the best bot for every user
             submissions = models.Submission.objects.filter(game = game)
-            users = submissions.filter(active=True).values("user__username", "name").annotate(score=Max('score')).order_by('-score').values("name", "user__username", "score")
+            users = submissions.filter(active=True, user__is_active = True).values("user__username", "name").annotate(score=Max('score')).order_by('-score').values("name", "user__username", "score")
 
             standings = list(users)
         except exceptions.ObjectDoesNotExist:
@@ -94,7 +94,7 @@ def standings(request, page=1, gameName=None):
         for game in games:
             # Get the best bot for every user
             submissions = models.Submission.objects.filter(game=game)
-            users = submissions.filter(active=True).values("user__username").annotate(score=Max('score'))
+            users = submissions.filter(active=True, user__is_active = True).values("user__username").annotate(score=Max('score'))
             for user in users:
                 if not user_score.has_key(user["user__username"]):
                     user_score[user["user__username"]] = 0

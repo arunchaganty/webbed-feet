@@ -7,7 +7,7 @@ class RoundRobinScheduler(Scheduler.Scheduler):
     def schedule(cls, game):
         while True:
             # Only two players
-            candidates = game.submission_set.filter(active=True).order_by("count")
+            candidates = game.submission_set.filter(active=True, user__is_active = True).order_by("count")
 
             if len(candidates) < 2:
                 print "Insufficient candidates"
