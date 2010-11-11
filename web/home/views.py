@@ -29,7 +29,7 @@ def get_ranking(user):
 
 
 def home(request):
-    notices = models.Notice.objects.all().order_by("-timestamp")
+    notices = models.Notice.objects.all().order_by("-timestamp").limit(4)
 
     if not request.user.is_authenticated():
         form = auth_forms.AuthenticationForm()
