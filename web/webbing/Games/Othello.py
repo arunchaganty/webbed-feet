@@ -153,7 +153,7 @@ class Othello(Game.Game):
 
     @classmethod
     def scoreHook(cls, output):
-        lines = output.splitlines()
+        lines = output.strip().splitlines()
         if len(lines) == 1:
             try:
                 status = "OK"
