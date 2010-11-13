@@ -113,6 +113,7 @@ class Run( models.Model ):
         elif status in ["DQ2", "TO2", "CR2"]:  
             player1.score = float(score1 + player1.score * player1.count) / float(count)
         elif status in ["DQ1", "TO1"]:
+            player1.score = float(score1 + player1.score * player1.count) / float(count)
             player1.failures += 1 
             if player1.failures >= gbl.FAIL_CHANCES:
                 player1.active = False
@@ -133,6 +134,7 @@ class Run( models.Model ):
         elif status in ["DQ1", "TO1", "CR1"]:  
             player2.score = float(score2 + player2.score * player2.count) / float(count)
         elif status in ["DQ2", "TO2", "CR2"]:  
+            player2.score = float(score2 + player2.score * player2.count) / float(count)
             player2.failures += 1 
             if player2.failures >= gbl.FAIL_CHANCES:
                 player2.active = False
@@ -156,6 +158,23 @@ def reset_game(modeladmin, request, queryset):
         game.save()
 reset_game.short_description = "Reset Game"
 
+@transaction.commit_on_success()
+def rescore_game(modeladmin, request, queryset):
+    runs = Run.objects.all().exclude(status="ERR")
+    for game in queryset:
+        print runs
+        for sub in Submission.objects.filter(game=game):
+            runs1 = runs.filter(player1=sub)
+            runs2 = runs.filter(player2=sub)
+            score1 = runs1.aggregate(models.Avg('score1'))['score1__avg']
+            score2 = runs2.aggregate(models.Avg('score2'))['score2__avg']
+            if not score1: score1 = 0
+            if not score2: score2 = 0
+
+            sub.score = score1 + score2
+            sub.save()
+rescore_game.short_description = "Rescore Game"
+
 class GameAdmin( admin.ModelAdmin ):
-    actions = [reset_game]
+    actions = [reset_game, rescore_game]
 
