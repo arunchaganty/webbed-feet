@@ -162,7 +162,6 @@ reset_game.short_description = "Reset Game"
 def rescore_game(modeladmin, request, queryset):
     runs = Run.objects.all().exclude(status="ERR")
     for game in queryset:
-        print runs
         for sub in Submission.objects.filter(game=game):
             runs1 = runs.filter(player1=sub)
             runs2 = runs.filter(player2=sub)
