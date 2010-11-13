@@ -22,7 +22,7 @@ def obliterate(path):
         for d in dirs:
             shutil.rmtree(os.path.join(root, d))
 
-class Othello(Game.Game):
+class NumberGame(Game.Game):
     GAME_CWD = os.path.join(gbl.ROOT_DIR, "runnest/number_game/")
     EXECUTABLE = os.path.join(gbl.ROOT_DIR, "runnest/number_game/bin/potato")
     POST_RUN_LOG = "game.log"
@@ -151,7 +151,7 @@ class Othello(Game.Game):
 
     @classmethod
     def scoreHook(cls, output):
-        lines = output.strip.().splitlines()
+        lines = output.strip().splitlines()
         if len(lines) == 1:
             try:
                 status = "OK"
