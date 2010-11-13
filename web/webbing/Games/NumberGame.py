@@ -161,22 +161,22 @@ class Othello(Game.Game):
                 if score < 0:
                     score = -score
                     score1 = 0
-                    score2 = score + 10
+                    score2 = score + 20
                 elif score == 0:
-                    score1 = 5
-                    score2 = 5 
+                    score1 = 10
+                    score2 = 10 
                 elif score > 0:
-                    score1 = score + 10
+                    score1 = score + 20
                     score2 = 0
             except:
                 # Else expect an error code
                 if output in ["DQ1", "TO1"]:
                     status = output
                     score1 = 0
-                    score2 = 10 + 100
+                    score2 = 20 + 100
                 elif output in ["DQ2", "TO2"]:
                     status = output
-                    score1 = 10 + 100
+                    score1 = 20 + 100
                     score2 = 0
                 else: # output in ["CR1", "CR2", "ERR"]:
                     if output not in ["CR1", "CR2", "ERR"]:
