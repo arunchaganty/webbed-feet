@@ -54,9 +54,17 @@
           <td>{{submission.count}}</td>
           <td>{{submission.timestamp}}</td>
           <td>{% if submission.active %} 
-            <a href="{{SITE_URL}}/judge/manage/deactivate/{{submission.id}}/">Active</a> 
+            {% if submission.game.submittable %} 
+                <a href="{{SITE_URL}}/judge/manage/deactivate/{{submission.id}}/">Active</a>
+            {% else %}
+                Active
+            {%endif%}
             {% else %} 
-            <a href="{{SITE_URL}}/judge/manage/activate/{{submission.id}}/">Inactive</a> 
+            {% if submission.game.submittable %} 
+                <a href="{{SITE_URL}}/judge/manage/activate/{{submission.id}}/">Inactive</a>
+            {% else %}
+                Inactive
+            {%endif%}
             {% endif %}
           </td>
           <td>{{submission.comments}}</td>

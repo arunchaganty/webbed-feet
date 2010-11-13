@@ -11,13 +11,13 @@ import gbl
 
 class TaskManager:
     period = -1 
-    parallelism=1
+    parallelism=gbl.PARALLEL_THREADS
 
     threads = []
     sources = []
     tasks = []
 
-    def __init__(self, period = gbl.MAINLOOP_PERIOD, parallelism=1):
+    def __init__(self, period = gbl.MAINLOOP_PERIOD, parallelism=gbl.PARALLEL_THREADS):
         self.period = period
         self.parallelism = parallelism
 
@@ -50,6 +50,7 @@ class TaskManager:
                 thread.join()
         self.threads = live
 
+        print len(self.threads), self.parallelism
         # Launch threads if possible
         if len(self.threads) < self.parallelism:
             try:

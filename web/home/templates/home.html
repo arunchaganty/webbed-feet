@@ -20,7 +20,15 @@
         </p>
 
         <p>
-        The <b>code for the game</b> (Othello) can be found <a href="{{MEDIA_URL}}/files/Desdemona.tar.gz">here</a> (Last updated: <i>04th November 2010</i>). For more help, check the <a href="{{SITE_URL}}/home/help/">help section</a>.
+        <b>Code for games:</b> <a href="{{MEDIA_URL}}/files/Desdemona.tar.gz">Othello</a> (Last updated: <i>04th November 2010</i>). <a href="{{MEDIA_URL}}/files/Potato.tar.gz">NumberGame</a> (Last updated: <i>13th November 2010</i>).
+        </p>
+
+        <p>
+        <b>Documentation for games:</b> <a href="{{MEDIA_URL}}/docs/othello/">Othello</a> (Last updated: <i>04th November 2010</i>). <a href="{{MEDIA_URL}}/docs/number_game/">NumberGame</a> (Last updated: <i>13th November 2010</i>).
+        </p>
+
+        <p>
+         For general help, check the <a href="{{SITE_URL}}/home/help/">help section</a>.
         </p>
 
         <div class="green">
@@ -29,12 +37,6 @@
               {% for notice in notices %}
               <li><b>{{notice.timestamp}}</b> {{notice|safe}}</li>
               {% endfor %}
-              <!--
-                <li> <b>31st October 2010</b>: There is a <b>bug in the scoring system</b> that was recently found (Thanks Sagar B). This is due to debug print statements during the execution of the program. Please <b>direct all your debug statments to stderr</b>. Scores and standings have been reset. A fixed version of the program should follow shortly</li>
-                <li> <b>26th October 2010</b>: Added a bounds check in validate_move and make_move. Also, fix to standings (bot name now prints correctly). (Thanks Florian)</li>
-                <li> <b>23rd October 2010</b>: Minor fix in score system + Fix in replay of pass moves. Earlier version printed RedCount-BlackCount; it should be the opposite. Fixed (Thanks Prabhat, Bharadwaj)</li>
-                <li> <b>19th October 2010</b>: Updated the Othello game code. Bug Fixed: getRedCount(), getBlackCount() returning junk values. (Thanks Prabhat) </li>
-                -->
             </ul>
         </div>
       </td>

@@ -47,8 +47,8 @@
     {% for run in runs.object_list %}
     <tr class="{% cycle 'dark' 'light' %}">
       <td><b>{{run.timestamp}}</b></td>
-      <td>{{run.player1.user}} ({{run.player1.name}})</td>
-      <td>{{run.player2.user}} ({{run.player2.name}})</td>
+      <td>{{run.player1.user}} (<a href="{{SITE_URL}}/judge/results/bot/{{run.player1.id}}/">{{run.player1.name}}</a>)</td>
+      <td>{{run.player2.user}} (<a href="{{SITE_URL}}/judge/results/bot/{{run.player2.id}}/">{{run.player2.name}}</a>)</td>
       <td>{{run.get_status_display}}</td>
       <td>{{run.score1}}</td>
       <td>{{run.score2}}</td>

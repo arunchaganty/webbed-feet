@@ -1,6 +1,6 @@
 import Scheduler
 
-RUN_COUNT = 5
+RUN_COUNT = 2
 
 class CompetitionScheduler(Scheduler.Scheduler):
     """Schedules games so that all bots get a nearly equal share of matches"""
@@ -12,7 +12,7 @@ class CompetitionScheduler(Scheduler.Scheduler):
 
         if len(candidates) < 2:
             print "Insufficient candidates"
-            return Scheduler.Task()
+            yield Scheduler.Task()
 
         for i in range(RUN_COUNT):
             for player1 in candidates:
