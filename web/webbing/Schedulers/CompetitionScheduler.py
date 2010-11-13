@@ -1,6 +1,6 @@
 import Scheduler
 
-RUN_COUNT = 3
+RUN_COUNT = 2
 
 class CompetitionScheduler(Scheduler.Scheduler):
     """Schedules games so that all bots get a nearly equal share of matches"""
