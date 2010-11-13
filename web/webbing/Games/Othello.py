@@ -1,5 +1,3 @@
-# Abstraction of a game and all it's aspects
-
 import Game
 
 import os
