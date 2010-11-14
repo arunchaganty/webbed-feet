@@ -31,7 +31,7 @@ def manage(request):
         if form.is_valid():
             form.save()
             # Set the first MAX_ACTIVE_BOTS bots 'active', and make all the rest inactive
-            bots = models.Submission.objects.filter(user = request.user, active=True, user__is_active = True).order_by('-timestamp')
+            bots = models.Submission.objects.filter(user = request.user, game=form.game, active=True, user__is_active = True).order_by('-timestamp')
             if len(bots) > settings.MAX_ACTIVE_BOTS:
                 for bot in bots[settings.MAX_ACTIVE_BOTS:]: 
                     bot.active = False
@@ -50,7 +50,7 @@ def manage(request):
 def activate(request, bot_id):
     try:
         submission = models.Submission.objects.get(user = request.user, id=bot_id)
-        active_bot_count = models.Submission.objects.filter(user = request.user, active=True).count()
+        active_bot_count = models.Submission.objects.filter(user = request.user, active=True, game=submission.game).count()
         if active_bot_count >= settings.MAX_ACTIVE_BOTS:
             messages.error(request, "You already have the maximum allowed number of active bots (%d)"%(settings.MAX_ACTIVE_BOTS) )
         else:
