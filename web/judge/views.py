@@ -31,7 +31,7 @@ def manage(request):
         if form.is_valid():
             form.save()
             # Set the first MAX_ACTIVE_BOTS bots 'active', and make all the rest inactive
-            bots = models.Submission.objects.filter(user = request.user, game=form.game, active=True, user__is_active = True).order_by('-timestamp')
+            bots = models.Submission.objects.filter(user = request.user, game=form.cleaned_data['game'], active=True, user__is_active = True).order_by('-timestamp')
             if len(bots) > settings.MAX_ACTIVE_BOTS:
                 for bot in bots[settings.MAX_ACTIVE_BOTS:]: 
                     bot.active = False
